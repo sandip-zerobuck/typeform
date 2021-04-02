@@ -1,0 +1,18 @@
+Admin : 
+
+Dashboard
+----------
+=> Admin Change Password
+=> Image, Link, Video - Coin Update Modual In Home Page
+=> Notification
+
+_______Merchant_______
+----------------------
+=> Home Page Request Show - Every 3 Secound
+=> Remark TextBox - In User Request
+
+_______Shop_____
+------------------
+
+=> Sepecifg Product Location
+=> Merchant Ads Report Clear
