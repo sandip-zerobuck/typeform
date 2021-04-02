@@ -17,29 +17,13 @@ class Signup extends CI_Controller
     
     public function index()
     {
-            /*$data['pincode'] = $this->crud->get_with_where('pincodemaster',["status"=>1]);*/
-            $data['country'] = $this->crud->get_with_where('countrymaster',['status'=>1]);
-            $data['qualification'] = $this->crud->get_with_where('qualification',["status"=>1]);
-
-
-            /*$join_array = [
-              'areamaster am' => 'pm.area_id = am.id'
-            ];
-    $join_type = ['inner'];
-  $data['pincode'] = $this->crud->get_with_join('pincodemaster pm', 'pm.pincode as pincode,pm.id as id,am.name as name', ["pm.status"=>'1'], $join_array, $join_type);*/
-
-
-            $this->load->view('signup',$data);
+           
+        $this->load->view('signup');
     }
 
     public function add()
     {
-        // echo $this->session->userdata('refercode'); die();
-        $data['country'] = $this->crud->get_with_where('countrymaster',['status'=>1]);
-
-        /*$data['pincode'] = $this->crud->get_all('pincodemaster');*/
-        $data['qualification'] = $this->crud->get_with_where('qualification',["status"=>1]);
-        $this->load->view('signup',$data);
+        $this->load->view('signup');
     }
 
     public function store()
@@ -47,123 +31,27 @@ class Signup extends CI_Controller
 
         $post_data = $this->input->post();
 
-        $this->form_validation->set_rules('firstname', 'Firstname', 'trim|required|alpha');
-        $this->form_validation->set_rules('lastname', 'Lastname', 'trim|required|alpha');
-        $this->form_validation->set_rules('mobile','mobile','required|trim|numeric|min_length[10]|max_length[10]|is_unique[usermaster.mobile]');
-        $this->form_validation->set_rules('email', 'Email', 'trim|valid_email|is_unique[usermaster.email]');
+        $this->form_validation->set_rules('username', 'Username', 'trim|required|is_unique[users.username]');
+        $this->form_validation->set_rules('email', 'Email', 'trim|valid_email|is_unique[users.email]');
         $this->form_validation->set_rules('password','Password','required|trim');
         $this->form_validation->set_rules('cpassword','Comfirm Password','required|trim|matches[password]');
-
-        $this->form_validation->set_rules('dob','Dob','required|trim');
-        $this->form_validation->set_rules('qulification','Qulification','required|trim');
-        $this->form_validation->set_rules('gender','Gender','required|trim');
-       
-        //$this->form_validation->set_rules('address','Address','required|trim');
-
-        $this->form_validation->set_rules('country_id','Country','required|trim');
-        $this->form_validation->set_rules('state_id','State','required|trim');
-        $this->form_validation->set_rules('district_id','District','required|trim');
-        $this->form_validation->set_rules('city_id','Taluka','required|trim');
-        $this->form_validation->set_rules('area_id','City','required|trim');
-        $this->form_validation->set_rules('pincode_id','Pincode','required|trim');
-
-        if(!empty($post_data['refercode'])) {
-            $this->form_validation->set_rules('refercode','Refer Code','callback_check_refercode');
-        }
-
-        $invitedcode_n  = 'A'.mt_rand(99, 999).'R'.mt_rand(99, 999).'N';
-        $check_invitecode = $this->crud->get_one_row('usermaster',['invitedcode'=>$invitedcode_n]);
-
-        if (!empty($check_invitecode)) 
-        {
-            $invitedcode = 'A'.mt_rand(99, 999).'R'.mt_rand(99, 999).'N';
-        }else
-        {
-            $invitedcode = $invitedcode_n;
-        }
-
-        $post_data['invitedcode'] = $invitedcode;
-
 
         if( !$this->form_validation->run() ) {
             $this->add();
         } else {
 
-            $pincode = $this->crud->get_with_where('pincodemaster',['id' => $post_data['pincode_id']]);
+            $post_data['created_at'] = date("Y-m-d H:i:s");
 
-            $post_data['created_date'] = $this->datetime;
-
-           // $post_data['password'] = md5($post_data['password']);
-            $post_data['password'] = base64_encode($post_data['password']);
+            $post_data['password'] = md5($post_data['password']);
             unset($post_data['cpassword']);
-
-            unset($post_data['country_id']);
-            unset($post_data['state_id']);
-            unset($post_data['district_id']);
-            unset($post_data['city_id']);
-            unset($post_data['area_id']);
-
-            $post_data['country_id'] = $pincode[0]->country_id;
-            $post_data['state_id'] = $pincode[0]->state_id;
-            $post_data['district_id'] = $pincode[0]->district_id;
-            $post_data['city_id'] = $pincode[0]->city_id;
-            $post_data['area_id'] = $pincode[0]->area_id;
             
-            $is_success = $this->crud->insert('usermaster',$post_data);
-            $userid = $this->db->insert_id();
-
-            // Signup Bonus.....
-
-            $signupbonus = $this->crud->get_all('signupbonus');
-            $data1 = array('userid'=>$userid, "coin"=>$signupbonus[0]->coin,"balance"=>$signupbonus[0]->coin,"description"=>$signupbonus[0]->name,"credit_debit"=>'1','created_at'=>date('Y-m-d h:i:s a', time()));
-            $update_balance = array('wallet_balance'=>$signupbonus[0]->coin);
-
-            // Admin Balance...
-            $admin_row = $this->crud->get_one_row('admin_balance',['id' =>'1']);
-            $total_admin_balance = $signupbonus[0]->coin + $admin_row->signup_bonus;
-            $admin_update = array('signup_bonus'=>$total_admin_balance);
-            $this->crud->update('admin_balance',$admin_update,['id' => '1']);
-                    
-            // User Balance...
-            $this->crud->insert('walletmaster',$data1);
-            $this->crud->update('usermaster',$update_balance,['id' => $userid]);
-
+            
+            $is_success = $this->crud->insert('users',$post_data);
+            
            if( $is_success ) {
-
-
-                // Visitor Count
-                $current_date = date("Y-m-d");
-                $visit_data = array('ip'=>$this->ip,'date'=>$current_date,'counter'=>1,'user_type'=>1,'user_id'=>$userid);
-                $this->crud->insert('newuser_visitor',$visit_data);
-
-                // Activet Mail User Email Id....
-
-                $otp = rand(99999,999999);
-                $post_data['otp_active'] = $otp;
-                $is_success = $this->crud->update('usermaster',$post_data,['id' => $userid]);
-
-                if ($is_success) 
-                {
-                    // OPT Set 
-                    $data['otp'] = $otp;
-
-                    // $send_sms = $this->crud->send_sms(SMS_USERNAME,SMS_PASSWORD,SMS_SENDERID,$otp.SMS_OTP, "91".$post_data['mobile']);
-
-                    // if($send_sms == 1) {
-                    $this->session->set_userdata('otp_mobile',$post_data['mobile']);
-                    $this->session->set_flashdata("response","success"); 
-                    $this->session->set_flashdata("error","OTP sent successfully. Check Your Mobile SMS."); 
-                    redirect($this->base_url.'Active');
-                    // } else {
-                    //     $this->session->set_flashdata("response","error"); 
-                    //     $this->session->set_flashdata("error","Error in sending Email."); 
-                    //     redirect($this->base_url);
-                    // }
-                }
-            
                $this->session->set_flashdata('response','success');
                $this->session->set_flashdata('error','Registration successfully.');
-               redirect($this->base_url.'Active');
+               redirect($this->base_url.'login');
             } else {
                 $this->session->set_flashdata('response','error');
                 $this->session->set_flashdata('error','Something went wrong! Please try again.');

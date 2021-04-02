@@ -85,94 +85,22 @@ defined('EXIT__AUTO_MIN')      OR define('EXIT__AUTO_MIN', 9); // lowest automat
 defined('EXIT__AUTO_MAX')      OR define('EXIT__AUTO_MAX', 125); // highest automatically-assigned error code
 
 if( $_SERVER['HTTP_HOST'] == 'localhost' ) {
-	$base_url = 'http://localhost/mycoinstation/';
+	$base_url = 'http://localhost/typeform/';
 }else {
-	$base_url = 'https://mycoinstation.com/';
+	$base_url = 'https://typeform.com/';
 }
 
-define('BASE_URL_ADMIN',$base_url.'admin/');
-define('BASE_URL_SHOP',$base_url.'shop/'); 
-define('BASE_URL_MERCHANT',$base_url.'merchant/');
-define('BASE_URL_HOME',$base_url.'home/'); 
-define('BASE_URL_HOME_ADS',$base_url.'ads/'); 
 define('BASE_URL',$base_url); 
+define('BASE_URL_ADMIN',$base_url.'admin/');
 
-define('BASE_URL_ADS',$base_url.'Adsuser/');
+
+define('USER_ASSETS',$base_url.'assets/');
+
 
 
 define('ADMIN_VIEW','admin/');
-define('SHOP_VIEW','shop/');
-define('MERCHANT_VIEW','merchant/');
-define('ADS_VIEW','adsuser/');
-define('HOME_VIEW','home/');
-define('HOME_ADS_VIEW','home/ads/');
 
 
-define('HEADER_SLIDER_UPLOADS','uploads/header_slider/');
 define('IMAGE_UPLOADS','uploads/image/');
-define('VIDEO_UPLOADS','uploads/video/');
-define('PDF_UPLOADS','uploads/pdf/');
-define('GALLERY_UPLOADS','uploads/gallery/');
-define('PRODUCTS_UPLOADS','uploads/image/');
 
-//DB FIELDS - DYNAMIC SECTION 
-define('HOME_INFORMATION','home_information');
-define('ABOUT','about');
-
-// Sent Mail Constant..
-define('SMTP_USER','My Coin Station');
-define('SMTP_FROM','mycoinstation@gmail.com');
-define('SMTP_PASS','mycoin.3011');
-define('SMTP_HOST','smtp.googlemail.com'); // remove ssl
-define('SMTP_PORT','587'); //if not ssl then '587'
-
-//module name in database table (module)
-define('IMAGEMASTER','imagemaster');
-define('VIDEOMASTER','videomaster');
-define('LINKMASTER','linkmaster');
-define('APPLINKMASTER','applinkmaster');
-define('USERMASTER','usermaster');
-define('MERCHANT','merchant');
-define('ADSUSER','adsuser');
-define('SHOP','shop');
-define('AREA','area');
-define('NOTIFICATION','notification');
-define('AREA_REPORT','area_report');
-define('REPORT','report');
-define('ADS','ads');
-define('BANNER','banner');
-define('COMPANY_INFO','company_info');
-define('SEND_MAIL','send_mail');
-define('NON_USER','non_user');
-define('DRAW','draw');
-
-// GUJARAT STATE ID.
-define('GUJARAT_STATE_ID','10');
-// SMS Send Number
-
-//define('ORDER_SMS_NUMBER',['9824229044','9099304119']);
-
-define('ORDER_SMS_NUMBER',['9664787091','9825958214']);
-
-
-// Payumoney ....
-// define('MERCHANT_KEY','nB8g1kiE');
-// define('SALT','LfGmdQWR3d');
-// define('ACTION','https://secure.payu.in');
-
-
-define('MERCHANT_KEY','QORWpKqR');
-define('SALT','oqUGb5fSOR');
-define('ACTION','https://secure.payu.in');
-
-//for live change action  https://secure.payu.in https://test.payu.in
-
-// tawk.to name : vhishpa enterprise Email : mycoinstation@gmail.com Pass : mycoin@vhishpa@98
-
-// SMS API
-
-define('SMS_USERNAME','9662300888');
-define('SMS_PASSWORD','b126114cffa94d71bc5eceb754a5d125');
-define('SMS_SENDERID','MYCOIN');
-define('SMS_OTP',' is OTP for Signup. VHISHPA ENTERPRISE  www.Mycoinstation.com');
 

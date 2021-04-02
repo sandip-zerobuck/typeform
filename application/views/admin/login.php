@@ -47,7 +47,6 @@
 					<form action="<?=base_url()?>admin/login/authenticate" method="post">
 						<div class="panel panel-body login-form">
 							<div class="text-center">
-								<img  src="<?=base_url()?>assets/home/img/logo_new2.png" style="">
 								<h5 class="content-group">Admin Login <small class="display-block">Enter your credentials below</small></h5>
 							</div>
 

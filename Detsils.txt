@@ -1,0 +1,22 @@
+Question
+--------------
+
+-> Thank your screen
+-> Short Text
+-> Long Text
+-> Phone Number
+-> Multiple Choice
+-> Statement
+-> Yes/No
+-> Ratiing 
+-> Website
+-> Drowpdown
+
+
+Database Table :
+-------------------
+
+Tankyou screen
+ -> Name
+ -> Image
+

@@ -236,13 +236,11 @@ class Crud extends CI_Model
 
     {
 
-        if( $this->check_exist('usermaster',['mobile' => $username ]) ) {
+        if( $this->check_exist('users',['username' => $username ]) ) {
 
-            $db_password = $this->get_selected_fields('usermaster','id,password',['mobile' => $username]);
+            $db_password = $this->get_selected_fields('users','id,password',['username' => $username]);
 
-
-
-            if( base64_encode($password) == $db_password[0]->password ) {
+            if( md5($password) == $db_password[0]->password ) {
 
                 return $db_password[0]->id;
 
@@ -260,7 +258,7 @@ class Crud extends CI_Model
 
     {
 
-        if( $this->session->has_userdata('user_id') && !empty($this->session->userdata('user_id')) ) {
+        if( $this->session->has_userdata('userid') && !empty($this->session->userdata('userid')) ) {
 
             return true;
 
@@ -269,108 +267,6 @@ class Crud extends CI_Model
         return false;
 
     }
-
-
-
-
-
-    // Merchant.....
-
-
-
-    public function authenticate_merchant($username,$password)
-
-    {
-
-        if( $this->check_exist('merchant_user',['mobile' => $username ]) ) {
-
-            $db_password = $this->get_selected_fields('merchant_user','id,password',['mobile' => $username]);
-
-
-
-            if( base64_encode($password) == $db_password[0]->password ) {
-
-                return $db_password[0]->id;
-
-            }
-
-        }
-
-        return false;
-
-    }
-
-
-
-    public function is_login_merchant()
-
-    {
-
-        if( $this->session->has_userdata('merchant_id') && !empty($this->session->userdata('merchant_id')) ) {
-
-            return true;
-
-        }
-
-        return false;
-
-    }  
-
-
-
-
-
-    // 
-
-
-
-    // Merchant.....
-
-
-
-    public function authenticate_ads($username,$password)
-
-    {
-
-        if( $this->check_exist('ads_user',['mobile' => $username ]) ) {
-
-            $db_password = $this->get_selected_fields('ads_user','id,password',['mobile' => $username]);
-
-
-
-            if( base64_encode($password) == $db_password[0]->password ) {
-
-                return $db_password[0]->id;
-
-            }
-
-        }
-
-        return false;
-
-    }
-
-
-
-    public function is_login_ads()
-
-    {
-
-        if( $this->session->has_userdata('ads_id') && !empty($this->session->userdata('ads_id')) ) {
-
-            return true;
-
-        }
-
-        return false;
-
-    }   
-
-
-
-
-
-    
 
 
 
