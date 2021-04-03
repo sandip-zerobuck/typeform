@@ -20,3 +20,30 @@ Tankyou screen
  -> Name
  -> Image
 
+
+form_master
+	-> id
+	-> userid
+
+form_create
+	-> id
+	-> form_master_id
+	-> short_text_id
+	-> type (short text, long text, radio button, multiple choice, Mobile Number, Statement, Picture Choice, Email, Ratting, Dropdown, Website, File Upload);
+
+
+short_text
+	-> id
+	-> form_create_id
+	-> title
+	-> value
+
+short_text
+	-> id
+	-> form_create_id
+	-> title
+	-> value (Long text)
+
+
+
+

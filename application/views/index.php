@@ -18,7 +18,7 @@
 
         <div class="row">
 
-            <div class="col-md-3 col-sm-6">
+            <div class="col-md-2 col-sm-6">
                 <div class="new-form-box">
                     
                     <h1>New Typeform</h1>
@@ -28,13 +28,30 @@
                 </div>
             </div>
 
-            <div class="col-md-3 col-sm-6">
+            <?php if (!empty($form_master)) { foreach ($form_master as $key => $value) { ?>
+
+            <div class="col-md-2 col-sm-6">
                 <div class="form-box">
                     
-                    
+                    <h1><?=$value->name?></h1>
+                    <br>
 
+                    <a href="<?=BASE_URL."typeform/view/".$value->access_token?>" class="btn btn-primary form-box-button" style="width: 100%">View Form</a>
+
+                    <hr>
+
+                    <a href="">
+                        <i class="icon-pencil7"></i> Edit
+                    </a>
+
+                    <a href="" class="pull-right text-danger">
+                        <i class="icon-trash-alt"></i> Delete
+                    </a>
+                    <br>
                 </div>
             </div>
+
+        <?php } } ?>
 
         </div>
 

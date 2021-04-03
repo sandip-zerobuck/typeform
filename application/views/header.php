@@ -79,7 +79,69 @@
 		    box-shadow: rgb(0 0 0 / 8%) 0px 2px 4px, rgb(0 0 0 / 6%) 0px 2px 12px;
 		    animation: 0.3s ease-in-out 0s 1 normal none running lbWRkT;
 		    transition: all 0.2s ease-in 0s;
+		    padding: 20px;
 		}
+
+		.form-box h1{
+			font-weight: bold;
+			font-size: 16px;
+		}
+
+		.form-box-button{
+			font-weight: bold;
+			box-shadow: rgb(0 0 0 / 8%) 0px 2px 4px, rgb(0 0 0 / 6%) 0px 2px 12px, rgb(0 0 0 / 4%) 0px 8px 14px, rgb(0 0 0 / 2%) 0px 12px 16px;
+			border-radius: 5px;
+			margin-top: 10px;
+		}
+
+		/* */
+
+		#form-name{
+			border: none;
+    		border-bottom: 1px solid #f00;
+    		width: 300px;
+    		color: #f00;
+    		font-size: 20px;
+		}
+
+		.question-box{
+			cursor: pointer;
+			padding: 10px;
+			margin: 15px;
+			box-shadow: rgb(0 0 0 / 8%) 0px 2px 4px, rgb(0 0 0 / 6%) 0px 2px 12px;
+		}
+
+		.question-box:hover{
+			box-shadow: rgb(0 0 0 / 8%) 0px 2px 4px, rgb(0 0 0 / 6%) 0px 2px 20px;
+		}
+
+		.question-box i{
+			padding: 5px;
+			margin-top: 2px;
+			font-size: 20px;
+		}
+
+		.question-box b{
+			font-size: 15px;
+		}
+
+		.filed-question-box{
+			padding: 10px;
+			margin: 20px;
+			box-shadow: rgb(0 0 0 / 8%) 0px 2px 4px, rgb(0 0 0 / 6%) 0px 2px 12px;
+		}
+
+		.filed-question-box .box-icon{
+			padding: 5px;
+			margin-top: 2px;
+			font-size: 30px;
+		}
+
+		.filed-question-box .box-text{
+			font-size: 20px;
+		}
+
+		
 	</style>
 
 </head>

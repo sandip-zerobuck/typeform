@@ -14,9 +14,16 @@ class Index extends CI_Controller
   }
   
   public function index()
-  {   
-    $this->load->view('index');
+  { 
+
+    $data['form_master'] = $this->crud->get_all('form_master');
+
+    $this->load->view('index',$data);
   }
+
+  
+
+  
 
 }
 
