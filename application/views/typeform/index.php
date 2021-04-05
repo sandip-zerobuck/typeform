@@ -21,7 +21,7 @@
             <div class="col-md-12">
                         <div class="card">
                             <div class="card-header header-elements-inline">
-                                <h3 class="card-title">Create Form <input type="text" name="" id="form-name" placeholder="Enter Form name"></h3>
+                                <h3 class="card-title"><input type="text" name="" id="form-name" placeholder="Enter Form name"></h3>
 
 
                                 <button class="btn btn-success pull-right publish">Publish</button>
@@ -37,7 +37,7 @@
                             <div class="card-body">
                                 <ul class="nav nav-tabs nav-tabs-bottom">
                                     <li class="nav-item active"><a href="#bottom-justified-tab1" class="nav-link active" data-toggle="tab">Create</a></li>
-                                    <li class="nav-item"><a href="#bottom-justified-tab2" class="nav-link" data-toggle="tab">Integrate</a></li>
+                                    <li class="nav-item"><a href="#bottom-justified-tab2" id="btn-Integrate" class="nav-link" data-toggle="tab">Integrate</a></li>
                                 </ul>
 
                                 <div class="tab-content">
@@ -59,16 +59,14 @@
                                             <button class="btn btn-primary" data-toggle="modal" data-target="#questionModal"><i class="icon-plus3"></i> Add your first question</button>
                                         </div>
 
-                                        <div class="col-md-6 col-sm-12">
-                                            
-                                        </div>
-
-
                                     </div>
 
-                                    <div class="tab-pane fade" id="bottom-justified-tab2">
-                                         <div class="col-md-12 col-sm-12">
-                                            
+                                    <div class="tab-pane fade tab-code-design hidden" id="bottom-justified-tab2">
+                                         <div class="col-md-6 col-sm-12">
+                                                
+                                            <div class="code-design-box">
+                                            </div> 
+
                                         </div>
                                     </div>
 
@@ -166,20 +164,40 @@ window.counter = 1;
 
             if (type == 'short-text') 
             {
-                var short_text_value = $('.short-text-value').val();
+                var short_text_value = $('.short-text-value'+counter).val();
+                var short_text_placeholder = $('.short-text-placeholder'+counter).val();
+
+                var required_field = '';
+
+                if ($('.required-value'+counter).is(":checked")) {
+                  required_field = 'yes';
+                }else{
+                    required_field = 'no';
+                }   
 
                 data.push({
                  'type': type, 
                  'counter': counter,
-                 'value' : {'short_text_value':short_text_value}
+                 'value' : {'short_text_value':short_text_value,'short_text_placeholder':short_text_placeholder,'required_field':required_field}
                  });
             }else{
 
-                var long_text_value = $('.long-text-value').val();
+                var required_field = '';
+
+                if ($('.required-value'+counter).is(":checked")) {
+                  required_field = 'yes';
+                }else{
+                    required_field = 'no';
+                }   
+
+                var long_text_value = $('.long-text-value'+counter).val();
+                var long_text_placeholder = $('.long-text-placeholder'+counter).val();
+
+
                 data.push({
                  'type': type, 
                  'counter': counter,
-                 'value' : {'long_text_value':long_text_value}
+                 'value' : {'long_text_value':long_text_value,'long_text_placeholder':long_text_placeholder,'required_field':required_field}
                  });
             }
 
@@ -198,6 +216,10 @@ window.counter = 1;
                 if (response.statuscode) 
                 {
                     show_notify(response.msg, 'bg-success');
+
+                    $('.code-design-box').html('<pre>&lt;iframe id="typeform-full" width="100%"height="100%" src="<?=BASE_URL?>form/'+response.data+'"&gt;&lt;/iframe&gt;</pre>');
+                    $('.tab-code-design').removeClass('hidden');
+                    $('#btn-Integrate').click();
                 }else{
                    show_notify(response.msg, 'bg-danger');
                 }
@@ -207,7 +229,7 @@ window.counter = 1;
             }
         });
 
-        console.log(data);
+        // console.log(data);
 
    });
 
@@ -220,10 +242,18 @@ function short_text(counter)
 
     content += '<div class="filed-question-box filed_counter_'+counter+'" data-counter="'+counter+'" data-type="short-text">';
     content += '<i class="box-icon icon-bubble-dots3 text-danger"></i>';
-    content += '<b class="box-text">Short Text '+counter+'</b>';
+    content += '<b class="box-text">Short Text</b>';
     content += '<button class="btn btn-danger pull-right remove-box" data-counter="'+counter+'"><i class="icon-trash-alt"></i> Delete</button>';
     content += '<hr>';
-    content += '<input type="text" class="form-control short-text-value" placeholder="Your question here" name="">';
+
+    content += '<b>Required :</b>';
+    content += '<label class="switch"> <input type="checkbox" name="required-value'+counter+'" class="required-value'+counter+'" value="yes"> <span class="slider round"></span> </label>';
+
+    content += '<br><input type="text" class="form-control short-text-value'+counter+'" placeholder="Your question here" name=""><br>';
+
+    content += '<input type="text" class="form-control short-text-placeholder'+counter+'" placeholder="Type your answer here..." value="Type your answer here...">';
+
+
     content += '</div>';
     return content;
 }
@@ -234,10 +264,18 @@ function long_text(counter)
 
     content += '<div class="filed-question-box filed_counter_'+counter+'" data-counter="'+counter+'" data-type="long-text">';
     content += '<i class="box-icon icon-bubble-lines4 text-success"></i>';
-    content += '<b class="box-text">Long Text '+counter+'</b>';
+    content += '<b class="box-text">Long Text</b>';
     content += '<button class="btn btn-danger pull-right remove-box" data-counter="'+counter+'"><i class="icon-trash-alt"></i> Delete</button>';
     content += '<hr>';
-    content += '<textarea class="form-control long-text-value" placeholder="Your question here"></textarea>';
+
+    content += '<b>Required :</b>';
+    content += '<label class="switch"> <input type="checkbox" name="required-value'+counter+'" class="required-value'+counter+'" value="yes"> <span class="slider round"></span> </label>';
+
+    content += '<input type="text" class="form-control long-text-value'+counter+'" placeholder="Your question here" name=""><br>';
+
+    content += '<input type="text" class="form-control long-text-placeholder'+counter+'" placeholder="Type your answer here..." value="Type your answer here...">';
+
+
     content += '</div>';
     return content;
 }

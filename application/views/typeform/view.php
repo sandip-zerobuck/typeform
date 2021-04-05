@@ -10,6 +10,21 @@
         box-shadow: rgb(0 0 0 / 8%) 0px 2px 4px, rgb(0 0 0 / 6%) 0px 2px 12px;
     }
 
+    .code-design-box{
+        padding: 20px;
+        box-shadow: rgb(0 0 0 / 8%) 0px 2px 4px, rgb(0 0 0 / 6%) 0px 2px 12px;
+    }
+
+    .code-design-box pre{
+        background: #000;
+        margin:  20px;
+        color: #fff;
+        overflow-wrap: break-word;
+        white-space: inherit;
+        border-radius: 5px;
+        box-shadow: rgb(0 0 0 / 10%) 0px 3px 12px 0px;
+    }
+
     .form-design-box{
         padding: 200px 0px 200px 0px;
     }
@@ -52,6 +67,30 @@
 
     .btn-start:hover{
         background-color: rgb(42, 97, 187);
+    }
+
+    .btn-submit{
+        position: relative;
+        font-family: inherit;
+        font-weight: 700;
+        cursor: pointer;
+        transition-duration: 0.1s;
+        transition-property: background-color, color, border-color, opacity, box-shadow;
+        transition-timing-function: ease-out;
+        outline: none;
+        border: 1px solid transparent;
+        margin: 0px;
+        box-shadow: rgb(0 0 0 / 10%) 0px 3px 12px 0px;
+        padding: 8px 18px;
+        min-height: 48px;
+        background-color: #22f750;
+        color: rgb(255, 255, 255);
+        border-radius: 4px;
+        font-size: 25px;
+    }
+
+    .btn-submit:hover{
+        background-color: #22f750;
     }
 
     .label-heading{
@@ -192,6 +231,14 @@
 
                                 <div class="col-md-6 col-sm-6">
                                     
+
+                                    <div class="code-design-box">
+                                            
+<pre>&lt;iframe id="typeform-full" width="100%"height="100%"
+    src="<?=BASE_URL?>form/<?=$result->access_token?>"&gt;&lt;/iframe&gt;</pre>
+
+                                    </div> 
+
                                 </div>
                             </div>
                         </div>
@@ -215,9 +262,70 @@
 <script type="text/javascript">
 $(document).ready(function(){
 
-window.counter = '';
+    window.counter = '';
 
-viewform();
+    viewform();
+
+
+    $(document).off('click','.btn-start').on('click','.btn-start',function(){
+
+        next($(this).data('from'), $(this).data('to'),$(this).data('type'),$(this).data('required'));
+
+    });
+
+    $(document).off('click','.btn-submit').on('click','.btn-submit',function(){
+
+        var data = [];
+
+        $(".next_lable").each(function () {
+                    
+                var type = $(this).data('type');
+                var counter = $(this).data('counter');
+                var name = $(this).data('name');
+
+                if (type == 'short_text') 
+                {
+                    data.push({
+                     'type': type, 
+                     'name' : name,
+                     'value': $('.short_text_value'+counter).val()
+                     });
+                }else if(type == 'long_text'){
+
+                    data.push({
+                     'type': type, 
+                     'name' : name,
+                     'value': $('.long_text_value'+counter).val()
+                     });
+
+                }
+
+        });
+
+        $.ajax({
+            url:'<?=BASE_URL?>typeform/storeUserResponse',
+            type:'POST',
+            dataType:'JSON',
+            data:{
+                id:$('#form-id').val(),
+                data:data
+            },
+            success:function(response){
+                if (response.statuscode) 
+                {
+                    show_notify(response.msg, 'bg-success');
+                }else{
+                   show_notify(response.msg, 'bg-danger');
+                }
+            },
+            error:function(response){
+                
+            }
+        });
+
+        console.log(data);
+
+    });
 
 });
 
@@ -244,10 +352,46 @@ function viewform()
 }
 
 
-function next(from, to)
+function next(from, to,type,required)
 {
-    $('.next_lable'+from).addClass('is-visible');
-    $('.next_lable'+to).removeClass('is-visible');
+
+    window.is_complate = true;
+
+    if (type == 'short_text') 
+    {
+        if (required == 'yes') 
+        {
+            if ($('.short_text_value'+to).val() == '') {
+                $('.error-msg').removeClass('hidden');
+                $('.text-error').text('Required');
+                window.is_complate = false;
+            }else{
+                $('.text-error').text('');
+                 window.is_complate = true;
+            }
+        }
+
+    }else if (type == 'long_text'){
+       if (required == 'yes') 
+        {
+            if ($('.long_text_value'+to).val() == '') {
+                $('.error-msg').removeClass('hidden');
+                $('.text-error').text('Required');
+                window.is_complate = false;
+            }else{
+                $('.text-error').text('');
+                 window.is_complate = true;
+            }
+        }
+    }
+
+    if (window.is_complate) {
+        $('.next_lable'+from).fadeIn( "fast" );
+        $('.next_lable'+to).fadeOut( "fast" );
+        $('.next_lable'+from).addClass('is-visible');
+        $('.next_lable'+to).removeClass('is-visible');
+    }
+
 }
 
 
