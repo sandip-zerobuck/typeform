@@ -34,17 +34,18 @@
                 <div class="form-box">
                     
                     <h1><?=$value->name?></h1>
-                    <br>
 
                     <a href="<?=BASE_URL."typeform/view/".$value->access_token?>" class="btn btn-primary form-box-button" style="width: 100%">View Form</a>
 
+                    <a href="<?=BASE_URL."typeform/response/".$value->access_token?>" class="btn btn-warning form-box-button" style="width: 100%">Response</a>
+
                     <hr>
 
-                    <a href="">
+                    <a href="<?=BASE_URL."typeform/edit/".$value->access_token?>">
                         <i class="icon-pencil7"></i> Edit
                     </a>
 
-                    <a href="" class="pull-right text-danger">
+                    <a href="<?=BASE_URL."typeform/delete/".$value->access_token?>" class="pull-right text-danger delete">
                         <i class="icon-trash-alt"></i> Delete
                     </a>
                     <br>

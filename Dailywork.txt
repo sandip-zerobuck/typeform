@@ -1,0 +1,13 @@
+06-04-2021
+---------------------------
+
+-> Typeform
+	
+	- Show Response
+	- Response read and unread
+	- Response Delete
+
+	- Create form add new quetion (Yes or New)
+	
+	- Edit form Complate
+	- Edit form filed delete complate

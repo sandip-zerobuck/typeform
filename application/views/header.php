@@ -55,6 +55,7 @@
 		    transition: all 0.2s ease-in 0s;
 		    background-color: rgb(4, 135, 175);
 		    padding: 20px;
+
 		}
 
 		.new-form-box h1{
@@ -72,14 +73,15 @@
 
 
 		.form-box{
-			width: 176px;
-		    height: 208px;
+			width: 200px;
+		    height: 250px;
 		    position: relative;
 		    border-radius: 8px;
 		    box-shadow: rgb(0 0 0 / 8%) 0px 2px 4px, rgb(0 0 0 / 6%) 0px 2px 12px;
 		    animation: 0.3s ease-in-out 0s 1 normal none running lbWRkT;
 		    transition: all 0.2s ease-in 0s;
 		    padding: 20px;
+		    margin-top: 10px;
 		}
 
 		.form-box h1{
@@ -219,6 +221,32 @@ input:checked + .slider:before {
         border-radius: 5px;
         box-shadow: rgb(0 0 0 / 10%) 0px 3px 12px 0px;
     }
+
+    /* Loader Inline */
+
+
+    .loader-inline{
+    	position: absolute;
+	    height: 100%;
+	    background: #000;
+	    opacity: 0.5;
+	    width: 100%;
+	    top: 0;
+	    margin: 0px;
+	    padding: 0px;
+	    left: 0;
+	    bottom: 0;
+    	}
+
+    .loader-inline .icon-spinner6 {
+	    z-index: 9999;
+	    font-size: 3em;
+	    color: #fff;
+	    position: absolute;
+	    top: 50%;
+	    display: block;
+	    left: 50%;
+	}
 		
 	</style>
 

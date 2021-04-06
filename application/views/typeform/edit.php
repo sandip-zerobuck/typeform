@@ -23,10 +23,10 @@
             <div class="col-md-12">
                         <div class="card">
                             <div class="card-header header-elements-inline">
-                                <h3 class="card-title"><input type="text" name="" id="form-name" placeholder="Enter Form name"></h3>
+                                <h3 class="card-title"><input type="text" id="form-name" placeholder="Enter Form name" value="<?=$result->name?>"></h3>
 
 
-                                <button class="btn btn-success pull-right publish">Publish</button>
+                                <button class="btn btn-primary pull-right editForm">Edit Form</button>
                                 <div class="header-elements">
                                     <div class="list-icons">
                                         <a class="list-icons-item" data-action="collapse"></a>
@@ -51,9 +51,6 @@
 
                                             <div class="filed-box">
                                                     
-
-
-
 
                                             </div>
 
@@ -130,6 +127,9 @@
 $(document).ready(function(){
 
 window.counter = 1;
+window.deleteId = [];
+
+vieweditData();
 
    $(document).off('click','.question-box').on('click','.question-box',function(){
 
@@ -161,13 +161,24 @@ window.counter = 1;
         var self = $(this);
         var counter = self.data('counter');
 
+        if (self.data('edit') == 'yes') 
+        {
+            window.deleteId.push({
+                 'id': self.data('id'),
+                 'type': self.data('type'),
+                 });
+        }
+
+
         if( confirm('Are you sure, you want to remove this filed?') ) {
                 $('.filed_counter_'+counter).remove();
         }
 
+        console.log(window.deleteId);
+
    });
 
-   $(document).off('click','.publish').on('click','.publish',function(){
+   $(document).off('click','.editForm').on('click','.editForm',function(){
 
     var data = [];
 
@@ -175,77 +186,36 @@ window.counter = 1;
                 
             var type = $(this).data('type');
             var counter = $(this).data('counter');
-            
+            var edit = $(this).data('edit');
+            var edit_id = $(this).data('edit_id');
 
-            if (type == 'short-text') 
-            {
-                var short_text_value = $('.short-text-value'+counter).val();
-                var short_text_placeholder = $('.short-text-placeholder'+counter).val();
-
-                var required_field = '';
-
-                if ($('.required-value'+counter).is(":checked")) {
+            if ($('.required-value'+counter).is(":checked")) {
                   required_field = 'yes';
                 }else{
                     required_field = 'no';
-                }   
+                } 
 
-                data.push({
+            data.push({
                  'type': type, 
                  'counter': counter,
-                 'value' : {'short_text_value':short_text_value,'short_text_placeholder':short_text_placeholder,'required_field':required_field}
+                 'edit':edit,
+                 'name':$('.text-value'+counter).val(),
+                 'value':$('.text-placeholder'+counter).val(),
+                 'required_field':required_field,
+                 'edit_id':edit_id,
                  });
-            }else if (type == 'long-text'){
-
-                var required_field = '';
-
-                if ($('.required-value'+counter).is(":checked")) {
-                  required_field = 'yes';
-                }else{
-                    required_field = 'no';
-                }   
-
-                var long_text_value = $('.long-text-value'+counter).val();
-                var long_text_placeholder = $('.long-text-placeholder'+counter).val();
-
-
-                data.push({
-                 'type': type, 
-                 'counter': counter,
-                 'value' : {'long_text_value':long_text_value,'long_text_placeholder':long_text_placeholder,'required_field':required_field}
-                 });
-            }else if (type == 'yesorno-text'){
-
-                var required_field = '';
-
-                if ($('.required-value'+counter).is(":checked")) {
-                  required_field = 'yes';
-                }else{
-                    required_field = 'no';
-                }   
-
-                var yesorno_text_value = $('.yesorno-text-value'+counter).val();
-                var yesorno_text_placeholder = $('.yesorno-text-placeholder'+counter).val();
-
-
-                data.push({
-                 'type': type, 
-                 'counter': counter,
-                 'value' : {'yesorno_text_value':yesorno_text_value,'yesorno_text_placeholder':yesorno_text_placeholder,'required_field':required_field}
-                 });
-
-            }
-
-
+        
         });
 
         $.ajax({
-            url:'<?=BASE_URL?>typeform/store',
+            url:'<?=BASE_URL?>typeform/update',
             type:'POST',
             dataType:'JSON',
             data:{
                 name:$('#form-name').val(),
-                data:data
+                id:'<?=$result->id?>',
+                data:data,
+                deleteId:window.deleteId
             },
             success:function(response){
                 if (response.statuscode) 
@@ -270,23 +240,44 @@ window.counter = 1;
 
 });
 
+function vieweditData()
+{
+    $.ajax({
+            url:'<?=BASE_URL?>typeform/editdata/<?=$result->access_token?>',
+            type:'GET',
+            dataType:'JSON',
+            success:function(response){
+                if (response.statuscode) 
+                {
+                    $('.filed-box').append(response.data);
+                    window.counter = response.total + 1;
+                }else{
+                   show_notify(response.msg, 'bg-danger');
+                }
+            },
+            error:function(response){
+                show_notify('Something went wrong! Please try again.', 'bg-danger');
+            }
+        });
+}
+
 
 function short_text(counter)
 {
     var content = '';
 
-    content += '<div class="filed-question-box filed_counter_'+counter+'" data-counter="'+counter+'" data-type="short-text">';
+    content += '<div class="filed-question-box filed_counter_'+counter+'" data-counter="'+counter+'" data-type="short-text" data-edit="no" data-edit_id="0">';
     content += '<i class="box-icon icon-bubble-dots3 text-danger"></i>';
     content += '<b class="box-text">Short Text</b>';
-    content += '<button class="btn btn-danger pull-right remove-box" data-counter="'+counter+'"><i class="icon-trash-alt"></i> Delete</button>';
+    content += '<button class="btn btn-danger pull-right remove-box" data-counter="'+counter+'"><i class="icon-trash-alt" data-edit="no"></i> Delete</button>';
     content += '<hr>';
 
     content += '<b>Required :</b>';
     content += '<label class="switch"> <input type="checkbox" name="required-value'+counter+'" class="required-value'+counter+'" value="yes"> <span class="slider round"></span> </label>';
 
-    content += '<br><input type="text" class="form-control short-text-value'+counter+'" placeholder="Your question here" name=""><br>';
+    content += '<br><input type="text" class="form-control text-value'+counter+'" placeholder="Your question here" name=""><br>';
 
-    content += '<input type="text" class="form-control short-text-placeholder'+counter+'" placeholder="Type your answer here..." value="Type your answer here...">';
+    content += '<input type="text" class="form-control text-placeholder'+counter+'" placeholder="Type your answer here..." value="Type your answer here...">';
 
 
     content += '</div>';
@@ -297,18 +288,18 @@ function long_text(counter)
 {
     var content = '';
 
-    content += '<div class="filed-question-box filed_counter_'+counter+'" data-counter="'+counter+'" data-type="long-text">';
+    content += '<div class="filed-question-box filed_counter_'+counter+'" data-counter="'+counter+'" data-type="long-text" data-edit="no" data-edit_id="0">';
     content += '<i class="box-icon icon-bubble-lines4 text-success"></i>';
     content += '<b class="box-text">Long Text</b>';
-    content += '<button class="btn btn-danger pull-right remove-box" data-counter="'+counter+'"><i class="icon-trash-alt"></i> Delete</button>';
+    content += '<button class="btn btn-danger pull-right remove-box" data-counter="'+counter+'"><i class="icon-trash-alt" data-edit="no"></i> Delete</button>';
     content += '<hr>';
 
     content += '<b>Required :</b>';
     content += '<label class="switch"> <input type="checkbox" name="required-value'+counter+'" class="required-value'+counter+'" value="yes"> <span class="slider round"></span> </label>';
 
-    content += '<input type="text" class="form-control long-text-value'+counter+'" placeholder="Your question here" name=""><br>';
+    content += '<input type="text" class="form-control text-value'+counter+'" placeholder="Your question here" name=""><br>';
 
-    content += '<input type="text" class="form-control long-text-placeholder'+counter+'" placeholder="Type your answer here..." value="Type your answer here...">';
+    content += '<input type="text" class="form-control text-placeholder'+counter+'" placeholder="Type your answer here..." value="Type your answer here...">';
 
 
     content += '</div>';
@@ -319,18 +310,18 @@ function yesorno_text(counter)
 {
     var content = '';
 
-    content += '<div class="filed-question-box filed_counter_'+counter+'" data-counter="'+counter+'" data-type="yesorno-text">';
+    content += '<div class="filed-question-box filed_counter_'+counter+'" data-counter="'+counter+'" data-type="yesorno-text" data-edit="no" data-edit_id="0">';
     content += '<i class="icon-check text-success"></i> <i class="icon-x text-danger"></i>';
     content += '<b class="box-text">Yes or No</b>';
-    content += '<button class="btn btn-danger pull-right remove-box" data-counter="'+counter+'"><i class="icon-trash-alt"></i> Delete</button>';
+    content += '<button class="btn btn-danger pull-right remove-box" data-counter="'+counter+'"><i class="icon-trash-alt" data-edit="no"></i> Delete</button>';
     content += '<hr>';
 
     content += '<b>Required :</b>';
     content += '<label class="switch"> <input type="checkbox" name="required-value'+counter+'" class="required-value'+counter+'" value="yes"> <span class="slider round"></span> </label>';
 
-    content += '<input type="text" class="form-control yesorno-text-value'+counter+'" placeholder="Your question here" name=""><br>';
+    content += '<input type="text" class="form-control text-value'+counter+'" placeholder="Your question here" name=""><br>';
 
-    content += '<input type="text" class="form-control yesorno-text-placeholder'+counter+'" placeholder="Type your answer here..." value="Select any one Yes or No">';
+    content += '<input type="text" class="form-control text-placeholder'+counter+'" placeholder="Type your answer here..." value="Select any one Yes or No">';
 
 
     content += '</div>';
