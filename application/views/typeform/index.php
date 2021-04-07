@@ -48,12 +48,34 @@
 
                                         <div class="col-md-6 col-sm-12">
 
+                                            <div class="filed-question-box filed_counter_'+counter+'" data-counter="'+counter+'" data-type="short-text">
+                                                 <i class="box-icon icon-enter text-danger"></i>
+                                                 <b class="box-text">Welcome Screen</b>
+                                                 <hr>
+                                                 <textarea class="form-control" placeholder="Enter welcome screen text"></textarea>
+
+                                                 <br>
+                                                 <button class="btn btn-primary">
+                                                     <input type="text" class="form-control welcome-btn" value="Start" placeholder="Button Text" name="">
+                                                 </button>
+
+                                            </div>
 
                                             <div class="filed-box">
-                                                    
+                                                
 
+                                            </div>
 
+                                            <div class="filed-question-box filed_counter_'+counter+'" data-counter="'+counter+'" data-type="short-text">
+                                                 <i class="box-icon icon-enter text-danger"></i>
+                                                 <b class="box-text">Welcome Screen</b>
+                                                 <hr>
+                                                 <textarea class="form-control" placeholder="Enter welcome screen text"></textarea>
 
+                                                 <br>
+                                                 <button class="btn btn-primary">
+                                                     <input type="text" class="form-control welcome-btn" value="Start" placeholder="Button Text" name="">
+                                                 </button>
 
                                             </div>
 

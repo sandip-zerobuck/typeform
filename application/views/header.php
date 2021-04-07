@@ -140,7 +140,16 @@
 		}
 
 		.filed-question-box .box-text{
+			margin-top: 2px;
 			font-size: 20px;
+		}
+
+		.welcome-btn{
+			background: inherit;
+			border: none;
+			color: #fff;
+			font-size: 18px;
+			font-weight: bold;
 		}
 
 	 /* Swith key */
