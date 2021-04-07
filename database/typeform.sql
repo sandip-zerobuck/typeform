@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 06, 2021 at 01:30 PM
+-- Generation Time: Apr 07, 2021 at 10:25 AM
 -- Server version: 10.4.18-MariaDB
 -- PHP Version: 7.3.27
 
@@ -24,6 +24,28 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `end_screen`
+--
+
+CREATE TABLE `end_screen` (
+  `id` int(11) NOT NULL,
+  `form_master_id` int(11) NOT NULL,
+  `details` text DEFAULT NULL,
+  `button_text` varchar(255) DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `end_screen`
+--
+
+INSERT INTO `end_screen` (`id`, `form_master_id`, `details`, `button_text`, `created_at`, `updated_at`) VALUES
+(1, 1, 'Tanks you..', 'Submit', '0000-00-00 00:00:00', '2021-04-07 13:29:37');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `form_create`
 --
 
@@ -31,6 +53,7 @@ CREATE TABLE `form_create` (
   `id` int(11) NOT NULL,
   `form_master_id` int(11) NOT NULL,
   `type` enum('short_text','long_text','yesorno_text') NOT NULL,
+  `content_id` int(11) NOT NULL,
   `short_text_id` int(11) NOT NULL,
   `long_text_id` int(11) NOT NULL,
   `yesorno_text_id` int(11) NOT NULL,
@@ -42,12 +65,13 @@ CREATE TABLE `form_create` (
 -- Dumping data for table `form_create`
 --
 
-INSERT INTO `form_create` (`id`, `form_master_id`, `type`, `short_text_id`, `long_text_id`, `yesorno_text_id`, `created_at`, `updated_at`) VALUES
-(1, 3, 'short_text', 1, 0, 0, '0000-00-00 00:00:00', '2021-04-06 16:57:47'),
-(2, 3, 'short_text', 2, 0, 0, '0000-00-00 00:00:00', '2021-04-06 16:57:47'),
-(3, 3, 'short_text', 3, 0, 0, '0000-00-00 00:00:00', '2021-04-06 16:57:47'),
-(4, 3, 'yesorno_text', 0, 0, 1, '0000-00-00 00:00:00', '2021-04-06 16:57:47'),
-(5, 3, 'long_text', 0, 1, 0, '0000-00-00 00:00:00', '2021-04-06 16:57:47');
+INSERT INTO `form_create` (`id`, `form_master_id`, `type`, `content_id`, `short_text_id`, `long_text_id`, `yesorno_text_id`, `created_at`, `updated_at`) VALUES
+(1, 1, 'short_text', 1, 0, 0, 0, '0000-00-00 00:00:00', '2021-04-07 13:29:37'),
+(2, 1, 'short_text', 2, 0, 0, 0, '0000-00-00 00:00:00', '2021-04-07 13:29:37'),
+(3, 1, 'short_text', 3, 0, 0, 0, '0000-00-00 00:00:00', '2021-04-07 13:29:37'),
+(4, 1, 'short_text', 4, 0, 0, 0, '0000-00-00 00:00:00', '2021-04-07 13:29:37'),
+(5, 1, 'yesorno_text', 1, 0, 0, 0, '0000-00-00 00:00:00', '2021-04-07 13:29:37'),
+(6, 1, 'long_text', 1, 0, 0, 0, '0000-00-00 00:00:00', '2021-04-07 13:29:37');
 
 -- --------------------------------------------------------
 
@@ -69,7 +93,7 @@ CREATE TABLE `form_master` (
 --
 
 INSERT INTO `form_master` (`id`, `access_token`, `name`, `user_id`, `created_at`, `updated_at`) VALUES
-(3, 'eccbc87e4b5ce2fe28308fd9f2a7baf3', 'Contact Form', 1, '2021-04-06 13:27:47', '2021-04-06 16:57:47');
+(1, 'c4ca4238a0b923820dcc509a6f75849b', 'Contact Form', 1, '2021-04-07 09:59:37', '2021-04-07 13:29:37');
 
 -- --------------------------------------------------------
 
@@ -91,7 +115,7 @@ CREATE TABLE `long_text` (
 --
 
 INSERT INTO `long_text` (`id`, `name`, `value`, `required_field`, `created_at`, `updated_at`) VALUES
-(1, 'Address', 'Type your Address', 'no', '0000-00-00 00:00:00', '2021-04-06 16:57:47');
+(1, 'Message', 'Your Message', 'yes', '0000-00-00 00:00:00', '2021-04-07 13:29:37');
 
 -- --------------------------------------------------------
 
@@ -113,7 +137,7 @@ CREATE TABLE `response_master` (
 --
 
 INSERT INTO `response_master` (`id`, `form_master_id`, `access_token`, `read_mark`, `created_at`, `updated_at`) VALUES
-(1, 3, 'eccbc87e4b5ce2fe28308fd9f2a7baf3', 'read', '2021-04-06 13:28:19', '2021-04-06 16:58:19');
+(1, 1, 'c4ca4238a0b923820dcc509a6f75849b', 'read', '2021-04-07 10:03:39', '2021-04-07 13:33:39');
 
 -- --------------------------------------------------------
 
@@ -135,9 +159,10 @@ CREATE TABLE `short_text` (
 --
 
 INSERT INTO `short_text` (`id`, `name`, `value`, `required_field`, `created_at`, `updated_at`) VALUES
-(1, 'Name', 'Type your name', 'no', '0000-00-00 00:00:00', '2021-04-06 16:57:47'),
-(2, 'Email', 'Type your Email', 'no', '0000-00-00 00:00:00', '2021-04-06 16:57:47'),
-(3, 'Mobile Number', 'Type your Mobile Number', 'no', '0000-00-00 00:00:00', '2021-04-06 16:57:47');
+(1, 'First Name', 'Your name..', 'no', '0000-00-00 00:00:00', '2021-04-07 13:29:37'),
+(2, 'Last Name', 'Your last name..', 'no', '0000-00-00 00:00:00', '2021-04-07 13:29:37'),
+(3, 'Email', 'Your Email id', 'no', '0000-00-00 00:00:00', '2021-04-07 13:29:37'),
+(4, 'Mobile', 'Your Mobile number', 'no', '0000-00-00 00:00:00', '2021-04-07 13:29:37');
 
 -- --------------------------------------------------------
 
@@ -184,11 +209,34 @@ CREATE TABLE `user_response` (
 --
 
 INSERT INTO `user_response` (`id`, `response_master_id`, `name`, `value`, `type`, `status`, `created_at`, `updated_at`) VALUES
-(1, 1, 'Name', 'sandip Dervaliya', 'short_text', 1, '0000-00-00 00:00:00', '2021-04-06 16:58:19'),
-(2, 1, 'Email', 'sderavaliya0@gmail.com', 'short_text', 1, '0000-00-00 00:00:00', '2021-04-06 16:58:19'),
-(3, 1, 'Mobile Number', '09825958214', 'short_text', 1, '0000-00-00 00:00:00', '2021-04-06 16:58:19'),
-(4, 1, 'Are you old 18+ ?', 'yes', 'yesorno_text', 1, '0000-00-00 00:00:00', '2021-04-06 16:58:19'),
-(5, 1, 'Address', 'Vangadhra', 'long_text', 1, '0000-00-00 00:00:00', '2021-04-06 16:58:19');
+(1, 1, 'First Name', 'Sandip', 'short_text', 1, '0000-00-00 00:00:00', '2021-04-07 13:33:39'),
+(2, 1, 'Last Name', 'Dervaliya', 'short_text', 1, '0000-00-00 00:00:00', '2021-04-07 13:33:39'),
+(3, 1, 'Email', 'sderavaliya0@gmail.com', 'short_text', 1, '0000-00-00 00:00:00', '2021-04-07 13:33:39'),
+(4, 1, 'Mobile', '09825958214', 'short_text', 1, '0000-00-00 00:00:00', '2021-04-07 13:33:39'),
+(5, 1, 'Are you old 18+?', 'yes', 'yesorno_text', 1, '0000-00-00 00:00:00', '2021-04-07 13:33:39'),
+(6, 1, 'Message', 'this is test message.', 'long_text', 1, '0000-00-00 00:00:00', '2021-04-07 13:33:39');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `welcome_screen`
+--
+
+CREATE TABLE `welcome_screen` (
+  `id` int(11) NOT NULL,
+  `form_master_id` int(11) NOT NULL,
+  `details` text DEFAULT NULL,
+  `button_text` varchar(255) DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `welcome_screen`
+--
+
+INSERT INTO `welcome_screen` (`id`, `form_master_id`, `details`, `button_text`, `created_at`, `updated_at`) VALUES
+(1, 1, 'Welcome to the zerobuck ', 'Start', '0000-00-00 00:00:00', '2021-04-07 13:29:37');
 
 -- --------------------------------------------------------
 
@@ -210,11 +258,18 @@ CREATE TABLE `yesorno_text` (
 --
 
 INSERT INTO `yesorno_text` (`id`, `name`, `value`, `required_field`, `created_at`, `updated_at`) VALUES
-(1, 'Are you old 18+ ?', 'Select any one Yes or No', 'no', '0000-00-00 00:00:00', '2021-04-06 16:57:47');
+(1, 'Are you old 18+?', 'Select any one Yes or No', 'no', '0000-00-00 00:00:00', '2021-04-07 13:29:37');
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `end_screen`
+--
+ALTER TABLE `end_screen`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `form_create_id` (`form_master_id`);
 
 --
 -- Indexes for table `form_create`
@@ -224,7 +279,8 @@ ALTER TABLE `form_create`
   ADD KEY `form_master_id` (`form_master_id`),
   ADD KEY `short_text_id` (`short_text_id`),
   ADD KEY `long_text_id` (`long_text_id`),
-  ADD KEY `yesorno_text_id` (`yesorno_text_id`);
+  ADD KEY `yesorno_text_id` (`yesorno_text_id`),
+  ADD KEY `content_id` (`content_id`);
 
 --
 -- Indexes for table `form_master`
@@ -266,6 +322,13 @@ ALTER TABLE `user_response`
   ADD KEY `form_master` (`response_master_id`);
 
 --
+-- Indexes for table `welcome_screen`
+--
+ALTER TABLE `welcome_screen`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `form_create_id` (`form_master_id`);
+
+--
 -- Indexes for table `yesorno_text`
 --
 ALTER TABLE `yesorno_text`
@@ -276,16 +339,22 @@ ALTER TABLE `yesorno_text`
 --
 
 --
+-- AUTO_INCREMENT for table `end_screen`
+--
+ALTER TABLE `end_screen`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `form_create`
 --
 ALTER TABLE `form_create`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `form_master`
 --
 ALTER TABLE `form_master`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `long_text`
@@ -303,7 +372,7 @@ ALTER TABLE `response_master`
 -- AUTO_INCREMENT for table `short_text`
 --
 ALTER TABLE `short_text`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -315,7 +384,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `user_response`
 --
 ALTER TABLE `user_response`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `welcome_screen`
+--
+ALTER TABLE `welcome_screen`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `yesorno_text`
