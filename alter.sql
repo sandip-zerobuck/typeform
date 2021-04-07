@@ -8,3 +8,25 @@ CREATE TABLE `users` (
  `updated_at` datetime NOT NULL DEFAULT current_timestamp(),
  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE `welcome_screen` (
+ `id` int(11) NOT NULL AUTO_INCREMENT,
+ `form_master_id` int(11) NOT NULL,
+ `details` text DEFAULT NULL,
+ `button_text` varchar(255) DEFAULT NULL,
+ `created_at` datetime NOT NULL,
+ `updated_at` datetime NOT NULL DEFAULT current_timestamp(),
+ PRIMARY KEY (`id`),
+ KEY `form_create_id` (`form_master_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE `end_screen` (
+ `id` int(11) NOT NULL AUTO_INCREMENT,
+ `form_master_id` int(11) NOT NULL,
+ `details` text DEFAULT NULL,
+ `button_text` varchar(255) DEFAULT NULL,
+ `created_at` datetime NOT NULL,
+ `updated_at` datetime NOT NULL DEFAULT current_timestamp(),
+ PRIMARY KEY (`id`),
+ KEY `form_create_id` (`form_master_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

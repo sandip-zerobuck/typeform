@@ -39,7 +39,6 @@
                             <div class="card-body">
                                 <ul class="nav nav-tabs nav-tabs-bottom">
                                     <li class="nav-item active"><a href="#bottom-justified-tab1" class="nav-link active" data-toggle="tab">Create</a></li>
-                                    <li class="nav-item"><a href="#bottom-justified-tab2" id="btn-Integrate" class="nav-link" data-toggle="tab">Integrate</a></li>
                                 </ul>
 
                                 <div class="tab-content">
@@ -48,50 +47,46 @@
 
                                         <div class="col-md-6 col-sm-12">
 
-                                            <div class="filed-question-box filed_counter_'+counter+'" data-counter="'+counter+'" data-type="short-text">
-                                                 <i class="box-icon icon-enter text-danger"></i>
-                                                 <b class="box-text">Welcome Screen</b>
-                                                 <hr>
-                                                 <textarea class="form-control" placeholder="Enter welcome screen text"></textarea>
-
-                                                 <br>
-                                                 <button class="btn btn-primary">
-                                                     <input type="text" class="form-control welcome-btn" value="Start" placeholder="Button Text" name="">
-                                                 </button>
-
-                                            </div>
-
-                                            <div class="filed-box">
+                                          <div class="filed-box">
                                                 
 
-                                            </div>
-
-                                            <div class="filed-question-box filed_counter_'+counter+'" data-counter="'+counter+'" data-type="short-text">
-                                                 <i class="box-icon icon-enter text-danger"></i>
-                                                 <b class="box-text">Welcome Screen</b>
-                                                 <hr>
-                                                 <textarea class="form-control" placeholder="Enter welcome screen text"></textarea>
-
-                                                 <br>
-                                                 <button class="btn btn-primary">
-                                                     <input type="text" class="form-control welcome-btn" value="Start" placeholder="Button Text" name="">
-                                                 </button>
-
-                                            </div>
-
+                                          </div>
 
                                             <button class="btn btn-primary" data-toggle="modal" data-target="#questionModal"><i class="icon-plus3"></i> Add your first question</button>
                                         </div>
 
-                                    </div>
-
-                                    <div class="tab-pane fade tab-code-design hidden" id="bottom-justified-tab2">
-                                         <div class="col-md-6 col-sm-12">
+                                        <div class="col-md-6 col-sm-12">
                                                 
-                                            <div class="code-design-box">
-                                            </div> 
+                                            <div class="filed-open-box">
+                                                 <i class="box-icon icon-enter text-danger"></i>
+                                                 <b class="box-text">Welcome Screen</b>
+                                                 <hr>
+                                                 <textarea class="form-control welcome-details" placeholder="Enter welcome screen text"></textarea>
+
+                                                 <br>
+                                                 <button class="btn btn-primary">
+                                                     <input type="text" class="form-control welcome-btn edittable-btn" value="Start" placeholder="Button Text" name="">
+                                                 </button>
+
+                                            </div>
+
+                                            
+
+                                            <div class="filed-open-box ">
+                                                 <i class="box-icon icon-enter text-danger"></i>
+                                                 <b class="box-text">End Screen</b>
+                                                 <hr>
+                                                 <textarea class="form-control end-details" placeholder="Enter End screen text"></textarea>
+
+                                                 <br>
+                                                 <button class="btn btn-success">
+                                                     <input type="text" class="form-control end-btn edittable-btn" value="Submit" placeholder="Button Text" name="">
+                                                 </button>
+
+                                            </div>
 
                                         </div>
+
                                     </div>
 
                                     
@@ -192,73 +187,35 @@ window.counter = 1;
    $(document).off('click','.publish').on('click','.publish',function(){
 
     var data = [];
+    var welcome_data = {
+                 'details': $('.welcome-details').val(),
+                 'button_text': $('.welcome-btn').val()
+                 };
+
+    var end_data = {
+                 'details': $('.end-details').val(),
+                 'button_text': $('.end-btn').val()
+                 };
 
         $(".filed-question-box").each(function () {
                 
             var type = $(this).data('type');
             var counter = $(this).data('counter');
-            
 
-            if (type == 'short-text') 
-            {
-                var short_text_value = $('.short-text-value'+counter).val();
-                var short_text_placeholder = $('.short-text-placeholder'+counter).val();
-
-                var required_field = '';
-
-                if ($('.required-value'+counter).is(":checked")) {
+            if ($('.required-value'+counter).is(":checked")) {
                   required_field = 'yes';
                 }else{
                     required_field = 'no';
-                }   
+                } 
 
-                data.push({
+            data.push({
                  'type': type, 
                  'counter': counter,
-                 'value' : {'short_text_value':short_text_value,'short_text_placeholder':short_text_placeholder,'required_field':required_field}
+                 'name':$('.text-value'+counter).val(),
+                 'value':$('.text-placeholder'+counter).val(),
+                 'required_field':required_field
                  });
-            }else if (type == 'long-text'){
-
-                var required_field = '';
-
-                if ($('.required-value'+counter).is(":checked")) {
-                  required_field = 'yes';
-                }else{
-                    required_field = 'no';
-                }   
-
-                var long_text_value = $('.long-text-value'+counter).val();
-                var long_text_placeholder = $('.long-text-placeholder'+counter).val();
-
-
-                data.push({
-                 'type': type, 
-                 'counter': counter,
-                 'value' : {'long_text_value':long_text_value,'long_text_placeholder':long_text_placeholder,'required_field':required_field}
-                 });
-            }else if (type == 'yesorno-text'){
-
-                var required_field = '';
-
-                if ($('.required-value'+counter).is(":checked")) {
-                  required_field = 'yes';
-                }else{
-                    required_field = 'no';
-                }   
-
-                var yesorno_text_value = $('.yesorno-text-value'+counter).val();
-                var yesorno_text_placeholder = $('.yesorno-text-placeholder'+counter).val();
-
-
-                data.push({
-                 'type': type, 
-                 'counter': counter,
-                 'value' : {'yesorno_text_value':yesorno_text_value,'yesorno_text_placeholder':yesorno_text_placeholder,'required_field':required_field}
-                 });
-
-            }
-
-
+          
         });
 
         $.ajax({
@@ -267,16 +224,16 @@ window.counter = 1;
             dataType:'JSON',
             data:{
                 name:$('#form-name').val(),
-                data:data
+                data:data,
+                welcome_data:welcome_data,
+                end_data:end_data
             },
             success:function(response){
                 if (response.statuscode) 
                 {
                     show_notify(response.msg, 'bg-success');
 
-                    $('.code-design-box').html('<pre>&lt;iframe id="typeform-full" width="100%"height="100%" src="<?=BASE_URL?>form/'+response.data+'"&gt;&lt;/iframe&gt;</pre>');
-                    $('.tab-code-design').removeClass('hidden');
-                    $('#btn-Integrate').click();
+                    window.location='<?=BASE_URL?>typeform/edit/'+response.data;
                 }else{
                    show_notify(response.msg, 'bg-danger');
                 }
@@ -286,7 +243,7 @@ window.counter = 1;
             }
         });
 
-         console.log(data);
+         //console.log(data);
 
    });
 
@@ -306,9 +263,9 @@ function short_text(counter)
     content += '<b>Required :</b>';
     content += '<label class="switch"> <input type="checkbox" name="required-value'+counter+'" class="required-value'+counter+'" value="yes"> <span class="slider round"></span> </label>';
 
-    content += '<br><input type="text" class="form-control short-text-value'+counter+'" placeholder="Your question here" name=""><br>';
+    content += '<br><input type="text" class="form-control text-value'+counter+'" placeholder="Your question here" name=""><br>';
 
-    content += '<input type="text" class="form-control short-text-placeholder'+counter+'" placeholder="Type your answer here..." value="Type your answer here...">';
+    content += '<input type="text" class="form-control text-placeholder'+counter+'" placeholder="Type your answer here..." value="Type your answer here...">';
 
 
     content += '</div>';
@@ -328,9 +285,9 @@ function long_text(counter)
     content += '<b>Required :</b>';
     content += '<label class="switch"> <input type="checkbox" name="required-value'+counter+'" class="required-value'+counter+'" value="yes"> <span class="slider round"></span> </label>';
 
-    content += '<input type="text" class="form-control long-text-value'+counter+'" placeholder="Your question here" name=""><br>';
+    content += '<input type="text" class="form-control text-value'+counter+'" placeholder="Your question here" name=""><br>';
 
-    content += '<input type="text" class="form-control long-text-placeholder'+counter+'" placeholder="Type your answer here..." value="Type your answer here...">';
+    content += '<input type="text" class="form-control text-placeholder'+counter+'" placeholder="Type your answer here..." value="Type your answer here...">';
 
 
     content += '</div>';
@@ -350,9 +307,9 @@ function yesorno_text(counter)
     content += '<b>Required :</b>';
     content += '<label class="switch"> <input type="checkbox" name="required-value'+counter+'" class="required-value'+counter+'" value="yes"> <span class="slider round"></span> </label>';
 
-    content += '<input type="text" class="form-control yesorno-text-value'+counter+'" placeholder="Your question here" name=""><br>';
+    content += '<input type="text" class="form-control text-value'+counter+'" placeholder="Your question here" name=""><br>';
 
-    content += '<input type="text" class="form-control yesorno-text-placeholder'+counter+'" placeholder="Type your answer here..." value="Select any one Yes or No">';
+    content += '<input type="text" class="form-control text-placeholder'+counter+'" placeholder="Type your answer here..." value="Select any one Yes or No">';
 
 
     content += '</div>';

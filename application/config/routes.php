@@ -54,7 +54,9 @@ $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 
 $route['admin'] = 'admin/dashboard';
-$route['products/(:any)'] = 'products/index/$1';
+$route['form/(:any)'] = 'form/index/$1';
+
+
 $route['product/(:any)'] = 'product/index/$1';
 
 $route['shop/product/(:num)'] = 'shop/product/index/$1';

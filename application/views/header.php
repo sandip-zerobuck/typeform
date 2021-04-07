@@ -45,6 +45,20 @@
 
 	<style type="text/css">
 
+		.code-design-box pre{
+		    background: #000;
+		    margin:  20px;
+		    color: #fff;
+		    overflow-wrap: break-word;
+		    white-space: inherit;
+		    border-radius: 5px;
+		    box-shadow: rgb(0 0 0 / 10%) 0px 3px 12px 0px;
+		}
+
+		.form-design-box{
+		    padding: 200px 0px 200px 0px;
+		}
+
 		.new-form-box{
 			width: 176px;
 		    height: 208px;
@@ -144,12 +158,29 @@
 			font-size: 20px;
 		}
 
-		.welcome-btn{
+		.edittable-btn{
 			background: inherit;
 			border: none;
 			color: #fff;
 			font-size: 18px;
 			font-weight: bold;
+		}
+
+		.filed-open-box{
+			padding: 10px;
+			margin: 20px;
+			box-shadow: rgb(0 0 0 / 8%) 0px 2px 4px, rgb(0 0 0 / 6%) 0px 2px 12px;
+		}
+
+		.filed-open-box .box-icon{
+			padding: 5px;
+			margin-top: 2px;
+			font-size: 30px;
+		}
+
+		.filed-open-box .box-text{
+			margin-top: 2px;
+			font-size: 20px;
 		}
 
 	 /* Swith key */

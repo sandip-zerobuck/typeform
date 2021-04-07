@@ -39,7 +39,6 @@
                             <div class="card-body">
                                 <ul class="nav nav-tabs nav-tabs-bottom">
                                     <li class="nav-item active"><a href="#bottom-justified-tab1" class="nav-link active" data-toggle="tab">Create</a></li>
-                                    <li class="nav-item"><a href="#bottom-justified-tab2" id="btn-Integrate" class="nav-link" data-toggle="tab">Integrate</a></li>
                                 </ul>
 
                                 <div class="tab-content">
@@ -58,17 +57,48 @@
                                             <button class="btn btn-primary" data-toggle="modal" data-target="#questionModal"><i class="icon-plus3"></i> Add your first question</button>
                                         </div>
 
-                                    </div>
-
-                                    <div class="tab-pane fade tab-code-design hidden" id="bottom-justified-tab2">
-                                         <div class="col-md-6 col-sm-12">
+                                        <div class="col-md-6 col-sm-12">
                                                 
                                             <div class="code-design-box">
-                                            </div> 
+                                                <pre>&lt;iframe id="typeform-full" width="100%"height="100%"
+                                                src="<?=BASE_URL?>form/<?=$result->access_token?>"&gt;&lt;/iframe&gt;</pre>
+                                            </div>  
+
+                                            <div class="filed-open-box">
+                                                 <i class="box-icon icon-enter text-danger"></i>
+                                                 <b class="box-text">Welcome Screen</b>
+                                                 <hr>
+                                                 <textarea class="form-control welcome-details" placeholder="Enter welcome screen text"><?=$welcome_screen->details?></textarea>
+
+                                                 <br>
+                                                 <button class="btn btn-primary">
+                                                     <input type="text" class="form-control welcome-btn edittable-btn" value="<?=$welcome_screen->button_text?>" placeholder="Button Text" name="">
+                                                 </button>
+
+                                                 <input type="hidden" class="welcome-id" value="<?=$welcome_screen->id?>" name="">
+
+                                            </div>
+
+                                            
+
+                                            <div class="filed-open-box ">
+                                                 <i class="box-icon icon-enter text-danger"></i>
+                                                 <b class="box-text">End Screen</b>
+                                                 <hr>
+                                                 <textarea class="form-control end-details" placeholder="Enter End screen text"><?=$end_screen->details?></textarea>
+
+                                                 <br>
+                                                 <button class="btn btn-success">
+                                                     <input type="text" class="form-control end-btn edittable-btn" value="<?=$end_screen->button_text?>" alue="<?=$end_screen->id?>" placeholder="Button Text" name="">
+                                                 </button>
+
+                                                 <input type="hidden" class="end-id" value="<?=$end_screen->id?>" name="">
+
+                                            </div>
 
                                         </div>
-                                    </div>
 
+                                    </div>
                                     
                                 </div>
                             </div>
@@ -181,6 +211,17 @@ vieweditData();
    $(document).off('click','.editForm').on('click','.editForm',function(){
 
     var data = [];
+    var welcome_data = {
+                 'id': $('.welcome-id').val(),
+                 'details': $('.welcome-details').val(),
+                 'button_text': $('.welcome-btn').val()
+                 };
+
+    var end_data = {
+                 'id': $('.end-id').val(),
+                 'details': $('.end-details').val(),
+                 'button_text': $('.end-btn').val()
+                 };
 
         $(".filed-question-box").each(function () {
                 
@@ -215,7 +256,9 @@ vieweditData();
                 name:$('#form-name').val(),
                 id:'<?=$result->id?>',
                 data:data,
-                deleteId:window.deleteId
+                deleteId:window.deleteId,
+                welcome_data:welcome_data,
+                end_data:end_data
             },
             success:function(response){
                 if (response.statuscode) 

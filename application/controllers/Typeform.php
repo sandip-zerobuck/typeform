@@ -11,6 +11,8 @@ class Typeform extends CI_Controller
     if( !$this->crud->is_login_user() ) {
       redirect(BASE_URL.'login');
     }
+
+    $this->load->model('Typeform_model');
   }
   
   public function index()
@@ -18,14 +20,10 @@ class Typeform extends CI_Controller
     $this->load->view('typeform/index');
   }
 
-  public function view($access_token)
-  { 
-      $data['result'] = $this->crud->get_one_row('form_master',['access_token'=>$access_token]);
-      $this->load->view('typeform/view',$data);
-  }
 
   public function store()
   {
+      $this->load->model('Typeform_model');
       $post_data = $this->input->post();
 
       $this->form_validation->set_rules('name','Name','required|trim');
@@ -40,81 +38,45 @@ class Typeform extends CI_Controller
                    'created_at'=>date("Y-m-d H:i:s")
                 ];
 
-            $is_success = $this->crud->insert('form_master',$insert_data);
-            $insert_id = $this->db->insert_id();
+            $insert_id = $this->Typeform_model->storeForm('form_master',$insert_data);
 
-            $is_success = $this->crud->update('form_master',['access_token'=>md5($insert_id)],['id'=>$insert_id]);
+            $welcome_data = [
+                   'form_master_id'=>$insert_id,
+                   'details'=>$post_data['welcome_data']['details'],
+                   'button_text'=>$post_data['welcome_data']['button_text']
+                ];
+
+            $is_success = $this->Typeform_model->storeWelcomeAndEdnData('welcome_screen',$welcome_data);
+
+            $end_data = [
+                   'form_master_id'=>$insert_id,
+                   'details'=>$post_data['end_data']['details'],
+                   'button_text'=>$post_data['end_data']['button_text']
+                ];
+            $is_success = $this->Typeform_model->storeWelcomeAndEdnData('end_screen',$end_data);
              
-
               for ($i=0; $i < count($post_data['data']); $i++) { 
 
-               if ($post_data['data'][$i]['type'] == 'short-text') 
-                {
-                  $short_text = [
-                        'name'=>$post_data['data'][$i]['value']['short_text_value'],
-                        'value'=>$post_data['data'][$i]['value']['short_text_placeholder'],
-                        'required_field'=>$post_data['data'][$i]['value']['required_field']
+                $data = [
+                        'name'=>$post_data['data'][$i]['name'],
+                        'value'=>$post_data['data'][$i]['value'],
+                        'required_field'=>$post_data['data'][$i]['required_field']
                     ];
 
-                    $is_success = $this->crud->insert('short_text',$short_text);
-                    $short_insert_id = $this->db->insert_id();
-
-                    if ($is_success) 
+                  // Content Insert 
+                   if ($post_data['data'][$i]['type'] == 'short-text') 
                     {
-                        $form_create_short = [
-                          'form_master_id'=>$insert_id,
-                          'type'=> 'short_text',
-                          'short_text_id'=> $short_insert_id
-                          ];
+                        $is_success = $this->Typeform_model->formCreateInsert('short_text',$data,$insert_id,'short_text');
 
-                        $is_success = $this->crud->insert('form_create',$form_create_short);
+                    }elseif ($post_data['data'][$i]['type'] == 'long-text') {
+
+                        $is_success = $this->Typeform_model->formCreateInsert('long_text',$data,$insert_id,'long_text');
+
+                    }elseif ($post_data['data'][$i]['type'] == 'yesorno-text') {
+                         
+                          $is_success = $this->Typeform_model->formCreateInsert('yesorno_text',$data,$insert_id,'yesorno_text');
                     }
-                }elseif ($post_data['data'][$i]['type'] == 'long-text') {
-
-                      $long_text = [
-                          'name'=>$post_data['data'][$i]['value']['long_text_value'],
-                          'value'=>$post_data['data'][$i]['value']['long_text_placeholder'],
-                        'required_field'=>$post_data['data'][$i]['value']['required_field']
-                      ];
-
-                      $is_success = $this->crud->insert('long_text',$long_text);
-                      $long_insert_id = $this->db->insert_id();
-
-                      if ($is_success) 
-                      {
-                          $form_create_long = [
-                            'form_master_id'=>$insert_id,
-                            'type'=> 'long_text',
-                            'long_text_id'=> $long_insert_id
-                            ];
-
-                          $is_success = $this->crud->insert('form_create',$form_create_long);
-                      }
-
-                }elseif ($post_data['data'][$i]['type'] == 'yesorno-text') {
-
-                      $yesorno_text = [
-                          'name'=>$post_data['data'][$i]['value']['yesorno_text_value'],
-                          'value'=>$post_data['data'][$i]['value']['yesorno_text_placeholder'],
-                        'required_field'=>$post_data['data'][$i]['value']['required_field']
-                      ];
-
-                      $is_success = $this->crud->insert('yesorno_text',$yesorno_text);
-                      $yesorno_insert_id = $this->db->insert_id();
-
-                      if ($is_success) 
-                      {
-                          $form_create_yesorno = [
-                            'form_master_id'=>$insert_id,
-                            'type'=> 'yesorno_text',
-                            'yesorno_text_id'=> $yesorno_insert_id
-                            ];
-
-                          $is_success = $this->crud->insert('form_create',$form_create_yesorno);
-                      }
-
-                }
-               
+                    // End Content Insert
               }
 
               if( $is_success ) {
@@ -132,10 +94,12 @@ class Typeform extends CI_Controller
   public function edit($access_token)
   {
       $data['result'] = $this->crud->get_one_row('form_master',['access_token'=>$access_token]);
+      $data['welcome_screen'] = $this->crud->get_one_row('welcome_screen',['form_master_id'=>$data['result']->id]);
+      $data['end_screen'] = $this->crud->get_one_row('end_screen',['form_master_id'=>$data['result']->id]);
       $this->load->view('typeform/edit',$data);
   }
 
-   public function editdata($access_token)
+  public function editdata($access_token)
   {
 
       if (!empty($access_token)) 
@@ -160,7 +124,7 @@ class Typeform extends CI_Controller
                 if ($value->type == 'short_text') 
                 {
 
-                  $short_text = $this->crud->get_one_row('short_text',['id'=>$value->short_text_id]);
+                  $short_text = $this->crud->get_one_row('short_text',['id'=>$value->content_id]);
 
                   $short_checked = '';
                   if ($short_text->required_field == 'yes') {
@@ -186,7 +150,7 @@ class Typeform extends CI_Controller
 
                 }elseif ($value->type == 'long_text') {
 
-                    $long_text = $this->crud->get_one_row('long_text',['id'=>$value->long_text_id]);
+                    $long_text = $this->crud->get_one_row('long_text',['id'=>$value->content_id]);
 
                     
                     $long_checked = '';
@@ -214,7 +178,7 @@ class Typeform extends CI_Controller
                 }elseif ($value->type == 'yesorno_text') {
 
 
-                    $yesorno_text = $this->crud->get_one_row('yesorno_text',['id'=>$value->yesorno_text_id]);
+                    $yesorno_text = $this->crud->get_one_row('yesorno_text',['id'=>$value->content_id]);
 
                     $yesorno_checked = '';
                     if ($yesorno_text->required_field == 'yes') {
@@ -258,9 +222,8 @@ class Typeform extends CI_Controller
 
   public function update()
   {
+      $this->load->model('Typeform_model');
       $post_data = $this->input->post();
-
-
 
       $this->form_validation->set_rules('name','Name','required|trim');
 
@@ -270,130 +233,89 @@ class Typeform extends CI_Controller
 
             $is_success = $this->crud->update('form_master',['name'=>$post_data['name']],['id'=>$post_data['id']]);
 
+            $welcome_data = [
+                   'details'=>$post_data['welcome_data']['details'],
+                   'button_text'=>$post_data['welcome_data']['button_text']
+                ];
+
+            $is_success = $this->Typeform_model->updateWelcomeAndEdnData('welcome_screen',$welcome_data,['id'=>$post_data['welcome_data']['id']]);
+
+            $end_data = [
+                   'details'=>$post_data['end_data']['details'],
+                   'button_text'=>$post_data['end_data']['button_text']
+                ];
+            $is_success = $this->Typeform_model->updateWelcomeAndEdnData('end_screen',$end_data,['id'=>$post_data['welcome_data']['id']]);
+
             if (!empty($post_data['deleteId'])) 
             {
                 for ($d=0; $d < count($post_data['deleteId']); $d++) { 
 
                       if ($post_data['deleteId'][$d]['type'] == 'short-text') 
                       {
-                          $is_success = $this->crud->delete('short_text',['id'=>$post_data['deleteId'][$d]['id']]);
-                          $is_success = $this->crud->delete('form_create',['short_text_id'=>$post_data['deleteId'][$d]['id']]);
+                          $is_success = $this->Typeform_model->deleteFormData('short_text',$post_data['deleteId'][$d]['id']);
                       }elseif ($post_data['deleteId'][$d]['type'] == 'long-text') {
-
-                          $is_success = $this->crud->delete('long_text',['id'=>$post_data['deleteId'][$d]['id']]);
-                          $is_success = $this->crud->delete('form_create',['long_text_id'=>$post_data['deleteId'][$d]['id']]);
-
+                          $is_success = $this->Typeform_model->deleteFormData('long_text',$post_data['deleteId'][$d]['id']);
                       }elseif ($post_data['deleteId'][$d]['type'] == 'yesorno-text') {
-
-                          $is_success = $this->crud->delete('yesorno_text',['id'=>$post_data['deleteId'][$d]['id']]);
-                          $is_success = $this->crud->delete('form_create',['yesorno_text_id'=>$post_data['deleteId'][$d]['id']]);
-
+                          $is_success = $this->Typeform_model->deleteFormData('yesorno_text',$post_data['deleteId'][$d]['id']);
                       }
                 }
             }
 
-            
+                            
 
-                         
+      for ($i=0; $i < count($post_data['data']); $i++) 
+      {
 
-              for ($i=0; $i < count($post_data['data']); $i++) { 
+          $data = [
+                    'name'=>$post_data['data'][$i]['name'],
+                    'value'=>$post_data['data'][$i]['value'],
+                    'required_field'=>$post_data['data'][$i]['required_field']
+                ]; 
 
 
-               if ($post_data['data'][$i]['type'] == 'short-text') 
-                {
-
-                  $short_text = [
-                        'name'=>$post_data['data'][$i]['name'],
-                        'value'=>$post_data['data'][$i]['value'],
-                        'required_field'=>$post_data['data'][$i]['required_field']
-                    ];
-
-                    if ($post_data['data'][$i]['edit'] == 'yes') {
-                          $is_success = $this->crud->update('short_text',$short_text,['id'=>$post_data['data'][$i]['edit_id']]);
-                    }elseif ($post_data['data'][$i]['edit'] == 'no'){
-
-                          $is_success = $this->crud->insert('short_text',$short_text);
-                          $short_insert_id = $this->db->insert_id();
-                          if ($is_success) 
-                          {
-                              $form_create_short = [
-                                'form_master_id'=>$post_data['id'],
-                                'type'=> 'short_text',
-                                'short_text_id'=> $short_insert_id
-                                ];
-
-                              $is_success = $this->crud->insert('form_create',$form_create_short);
-                          }
-                    }
-
-                }elseif ($post_data['data'][$i]['type'] == 'long-text') {
-
-                
-
-                      $long_text = [
-                        'name'=>$post_data['data'][$i]['name'],
-                        'value'=>$post_data['data'][$i]['value'],
-                        'required_field'=>$post_data['data'][$i]['required_field']
-                    ];
-
-                    if ($post_data['data'][$i]['edit'] == 'yes') {
-                          $is_success = $this->crud->update('long_text',$long_text,['id'=>$post_data['data'][$i]['edit_id']]);
-                    }elseif ($post_data['data'][$i]['edit'] == 'no'){
-
-                          $is_success = $this->crud->insert('long_text',$long_text);
-                          $long_insert_id = $this->db->insert_id();
-                          if ($is_success) 
-                          {
-                              $form_create_long = [
-                                'form_master_id'=>$post_data['id'],
-                                'type'=> 'long_text',
-                                'long_text_id'=> $long_insert_id
-                                ];
-
-                              $is_success = $this->crud->insert('form_create',$form_create_long);
-                          }
-                    }
-
-                }elseif ($post_data['data'][$i]['type'] == 'yesorno-text') {
-
-                  
-
-                      $yesorno_text = [
-                        'name'=>$post_data['data'][$i]['name'],
-                        'value'=>$post_data['data'][$i]['value'],
-                        'required_field'=>$post_data['data'][$i]['required_field']
-                    ];
-
-                    if ($post_data['data'][$i]['edit'] == 'yes') {
-                          $is_success = $this->crud->update('yesorno_text',$yesorno_text,['id'=>$post_data['data'][$i]['edit_id']]);
-                    }elseif ($post_data['data'][$i]['edit'] == 'no'){
-
-                          $is_success = $this->crud->insert('yesorno_text',$yesorno_text);
-                          $yesorno_insert_id = $this->db->insert_id();
-                          if ($is_success) 
-                          {
-                              $form_create_yesorno = [
-                                'form_master_id'=>$post_data['id'],
-                                'type'=> 'yesorno_text',
-                                'yesorno_text_id'=> $yesorno_insert_id
-                                ];
-
-                              $is_success = $this->crud->insert('form_create',$form_create_yesorno);
-                          }
-                    }
-
-                }
-               
+         if ($post_data['data'][$i]['type'] == 'short-text') 
+          {
+              if ($post_data['data'][$i]['edit'] == 'yes') {
+                $is_success = $this->Typeform_model->formUpdateData('short_text',$data,['id'=>$post_data['data'][$i]['edit_id']]);
+              }elseif ($post_data['data'][$i]['edit'] == 'no'){
+                  $is_success = $this->Typeform_model->formCreateInsert('short_text',$data,$post_data['id'],'short_text');
               }
 
-              if( $is_success ) {
-                      echo json_encode(['statuscode'=>true,'msg'=>'Recourd insert successfully','data'=>md5($post_data['id'])]);
-              }else{
-                  echo json_encode(['statuscode'=>false,'msg'=>'Something went wrong! Please try again.']);
+          }elseif ($post_data['data'][$i]['type'] == 'long-text') {
+
+              if ($post_data['data'][$i]['edit'] == 'yes') {
+                $is_success = $this->Typeform_model->formUpdateData('long_text',$data,['id'=>$post_data['data'][$i]['edit_id']]);
+              }elseif ($post_data['data'][$i]['edit'] == 'no'){
+                $is_success = $this->Typeform_model->formCreateInsert('long_text',$data,$post_data['id'],'short_text');
               }
 
+          }elseif ($post_data['data'][$i]['type'] == 'yesorno-text') {
+
+              if ($post_data['data'][$i]['edit'] == 'yes') {
+                $is_success = $this->Typeform_model->formUpdateData('yesorno_text',$data,['id'=>$post_data['data'][$i]['edit_id']]);
+              }elseif ($post_data['data'][$i]['edit'] == 'no'){
+                $is_success = $this->Typeform_model->formCreateInsert('yesorno_text',$data,$post_data['id'],'short_text');
+
+              }
+
+          }
+                 
+      }
+
+        if( $is_success ) {
+                echo json_encode(['statuscode'=>true,'msg'=>'Recourd edit successfully','data'=>md5($post_data['id'])]);
+        }else{
+            echo json_encode(['statuscode'=>false,'msg'=>'Something went wrong! Please try again.']);
         }
 
+    }
+
+  }
+
+  public function view($access_token)
+  { 
+      $data['result'] = $this->crud->get_one_row('form_master',['access_token'=>$access_token]);
+      $this->load->view('typeform/view',$data);
   }
 
   public function viewform($access_token)
@@ -406,7 +328,13 @@ class Typeform extends CI_Controller
 
         if (!empty($result)) {
 
-          $content = '<div id="name" class="is-visible next_lable0 next_lable"><center> <h1> Welcome to the zerobuck </h1> <button class="btn-start" data-from="1" data-to="0" data-type="welcome" data-required="no">Start</button></center>  </div> <input type="hidden" id="form-id" value="'.$result->id.'"> ';
+          $welcome_result = $this->crud->get_one_row('welcome_screen',['form_master_id'=>$result->id]);
+
+          if (!empty($welcome_result)) {
+            $content = '<div id="name" class="is-visible next_lable0 next_lable"><center> <h1> '.$welcome_result->details.' </h1> <button class="btn-start" data-from="1" data-to="0" data-type="welcome" data-required="no">'.$welcome_result->button_text.'</button></center>  </div> <input type="hidden" id="form-id" value="'.$result->id.'"> ';
+          }
+
+          
 
           $form = $this->crud->get_with_where('form_create',['form_master_id'=>$result->id]);
 
@@ -421,7 +349,7 @@ class Typeform extends CI_Controller
                 if ($value->type == 'short_text') 
                 {
 
-                  $short_text = $this->crud->get_one_row('short_text',['id'=>$value->short_text_id]);
+                  $short_text = $this->crud->get_one_row('short_text',['id'=>$value->content_id]);
                 
                   $content .= '<div class="next_lable next_lable'.$no.'" data-counter="'.$no.'" data-type="'.$value->type.'" data-name="'.$short_text->name.'">';
                   $content .= '<center>';
@@ -434,18 +362,22 @@ class Typeform extends CI_Controller
                 }elseif ($value->type == 'long_text') {
 
 
-                    $long_text = $this->crud->get_one_row('long_text',['id'=>$value->long_text_id]);
+                    $long_text = $this->crud->get_one_row('long_text',['id'=>$value->content_id]);
                     $content .= '<div class="next_lable next_lable'.$no.'" data-counter="'.$no.'" data-type="'.$value->type.'" data-name="'.$long_text->name.'">';
                     $content .= '<center>';
                     $content .= '<h1 class="label-heading"> <span class="question-no">'.$no.'.</span> '.$long_text->name.'</h1>';
-                    $content .= '<input type="text" class="long_text_input long_text_value'.$no.'" value="" placeholder="'.$short_text->value.'"><br><br>';
+                    
+                    // $content .= '<input type="text" class="long_text_input long_text_value'.$no.'" value="" placeholder="'.$long_text->value.'"><br><br>';
+
+                    $content .= '<textarea class="long_text_input long_text_value'.$no.'" value="" placeholder="'.$long_text->value.'"></textarea><br>';
+
                     $content .= '<button class="btn-start" data-from="'.($no+1).'" data-to="'.($no).'" data-required="'.$value->type.'" data-required="'.$long_text->required_field.'">Next</button>';
                     $content .= '</center>';
                     $content .= '</div>';
                 }elseif ($value->type == 'yesorno_text') {
 
 
-                    $yesorno_text = $this->crud->get_one_row('yesorno_text',['id'=>$value->yesorno_text_id]);
+                    $yesorno_text = $this->crud->get_one_row('yesorno_text',['id'=>$value->content_id]);
 
                     $content .= '<div class="next_lable next_lable'.$no.'" data-counter="'.$no.'" data-type="'.$value->type.'" data-name="'.$yesorno_text->name.'">';
                     $content .= '<center>';
@@ -473,7 +405,12 @@ class Typeform extends CI_Controller
 
             $content .= '<div id="name" class="error-msg hidden"><center> <b class="text-danger text-error"></b></center></div>';
 
-            $content .= '<div id="name" class="next_lable'.($total+1).' next_lable"><center> <h1> Thank you so mush </h1> <button class="btn-submit">Submit</button></center>  </div>';
+            $end_result = $this->crud->get_one_row('end_screen',['form_master_id'=>$result->id]);
+
+            if (!empty($end_result)) {
+
+              $content .= '<div id="name" class="next_lable'.($total+1).' next_lable"><center> <h1> '.$end_result->details.' </h1> <button class="btn-submit">'.$end_result->button_text.'</button></center>  </div>';
+            }
               
           }
 
@@ -490,6 +427,7 @@ class Typeform extends CI_Controller
 
   public function storeUserResponse()
   {
+      $this->load->model('Typeform_model');
       $post_data = $this->input->post();
 
       $this->form_validation->set_rules('id','Id','required|trim');
@@ -503,43 +441,19 @@ class Typeform extends CI_Controller
                    'created_at'=>date("Y-m-d H:i:s")
                 ];
 
-            $is_success = $this->crud->insert('response_master',$insert_data);
-            $insert_id = $this->db->insert_id();
-
-            $is_success = $this->crud->update('response_master',['access_token'=>md5($post_data['id'])],['id'=>$insert_id]);
+            $insert_id = $this->Typeform_model->storeUserResponse('response_master',$insert_data,$post_data['id']);
              
 
               for ($i=0; $i < count($post_data['data']); $i++) { 
 
-               if ($post_data['data'][$i]['type'] == 'short_text') 
-                {
-                  $short_data = [
+                $data = [
                         'response_master_id'=>$insert_id,
                         'name'=>$post_data['data'][$i]['name'],
                         'value'=>$post_data['data'][$i]['value'],
                         'type'=>$post_data['data'][$i]['type'],
                     ];
 
-                    $is_success = $this->crud->insert('user_response',$short_data);
-                }elseif ($post_data['data'][$i]['type'] == 'long_text'){
-
-                    $long_data = [
-                        'response_master_id'=>$insert_id,
-                        'name'=>$post_data['data'][$i]['name'],
-                        'value'=>$post_data['data'][$i]['value'],
-                        'type'=>$post_data['data'][$i]['type'],
-                    ];
-                    $is_success = $this->crud->insert('user_response',$long_data);
-                }elseif ($post_data['data'][$i]['type'] == 'yesorno_text'){
-
-                    $long_data = [
-                        'response_master_id'=>$insert_id,
-                        'name'=>$post_data['data'][$i]['name'],
-                        'value'=>$post_data['data'][$i]['value'],
-                        'type'=>$post_data['data'][$i]['type'],
-                    ];
-                    $is_success = $this->crud->insert('user_response',$long_data);
-                }
+                $is_success = $this->Typeform_model->storeUserResponseDetails('user_response',$data);
                
               }
 
