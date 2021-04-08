@@ -11,3 +11,32 @@ Today Work  - 06-04-2021
 	
 	- Edit form Complate
 	- Edit form filed delete complate
+
+
+
+Today Work  - 08-04-2021
+---------------------------
+
+-> Typeform
+	
+	- Add new quetion multiple choice
+	- multiple choice Edit
+	- multiple choice Delete
+	- multiple choice view on form
+	- multiple choice Response
+
+
+
+Next Work
+-----------------------
+
+-> Website
+-> Dropdown
+-> Email
+-> Phone Number
+-> Statement
+-> Ratting
+-> Date
+-> Number
+-> File upload
+-> 

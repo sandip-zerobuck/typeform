@@ -75,6 +75,10 @@ class Typeform extends CI_Controller
                     }elseif ($post_data['data'][$i]['type'] == 'yesorno-text') {
                          
                           $is_success = $this->Typeform_model->formCreateInsert('yesorno_text',$data,$insert_id,'yesorno_text');
+                    }elseif ($post_data['data'][$i]['type'] == 'checkbox-text') {
+
+                          $data['value'] = implode("=&",$data['value']);
+                          $is_success = $this->Typeform_model->formCreateInsert('checkbox_text',$data,$insert_id,'checkbox_text');
                     }
                     // End Content Insert
               }
@@ -202,6 +206,52 @@ class Typeform extends CI_Controller
                     $content .= '<input type="text" class="form-control text-placeholder'.$no.'" placeholder="Type your answer here..." value="'.$yesorno_text->value.'">';
 
                     $content .= '</div>';
+                }elseif ($value->type == 'checkbox_text') {
+
+
+                    $checkbox_text = $this->crud->get_one_row('checkbox_text',['id'=>$value->content_id]);
+
+                    $checkbox_checked = '';
+                    if ($checkbox_text->required_field == 'yes') {
+                      $checkbox_checked = 'checked';
+                    }else{
+                      $checkbox_checked = '';
+                    }
+
+
+                    $content .= '<div class="filed-question-box filed_counter_'.$no.'" data-counter="'.$no.'" data-type="checkbox-text" data-edit="yes" data-edit_id="'.$checkbox_text->id.'">';
+                    $content .= '<i class="icon-checkbox-checked2 text-primary"></i>';
+                    $content .= '<b class="box-text">Checkbox</b>';
+                    $content .= '<button class="btn btn-danger pull-right remove-box" data-counter="'.$no.'" data-edit="yes" data-id="'.$short_text->id.'" data-type="checkbox-text"><i class="icon-trash-alt"></i> Delete</button>';
+                    $content .= '<hr>';
+
+                    $content .= '<b>Required :</b>';
+                    $content .= '<label class="switch"> <input type="text" name="required-value'.$no.'" class="required-value'.$no.'" '.$checkbox_checked.' value="yes" > <span class="slider round"></span> </label>';
+
+                    $content .= '<br><input type="text" class="form-control text-value'.$no.'" placeholder="Your question here" name="" value="'.$checkbox_text->name.'"><br>';
+
+                    $content .= '<div class="choice-content'.$no.' list-choice">';
+
+                    $choice_array = explode("=&", $checkbox_text->value);
+
+
+                    foreach ($choice_array as $key => $value) {
+
+
+                          if ($key == 0) {
+                            $delete_choice = '';
+                          }else{
+                            $delete_choice = '<span class="remove-choice-box" data-counter="'.$no.'"><i class="icon-close2 text-danger"></i></span>';
+                          }
+                        
+                          $content .= '<div><input type="text" class="form-control choice-box choice-value'.$no.'" name="choice-value'.$no.'[]" value="'.$value.'" placeholder="Choice">'.$delete_choice.'</div>';
+                    }
+
+                    $content .= '</div>';
+
+                    $content .= '<button class="btn btn-primary btn-add-choice" data-counter="'.$no.'">Add choice</button>';
+
+                    $content .= '</div>';
                 }
 
                 $no++;
@@ -295,6 +345,17 @@ class Typeform extends CI_Controller
                 $is_success = $this->Typeform_model->formUpdateData('yesorno_text',$data,['id'=>$post_data['data'][$i]['edit_id']]);
               }elseif ($post_data['data'][$i]['edit'] == 'no'){
                 $is_success = $this->Typeform_model->formCreateInsert('yesorno_text',$data,$post_data['id'],'short_text');
+
+              }
+
+          }elseif ($post_data['data'][$i]['type'] == 'checkbox-text') {
+
+              $data['value'] = implode("=&",$data['value']);
+
+              if ($post_data['data'][$i]['edit'] == 'yes') {
+                $is_success = $this->Typeform_model->formUpdateData('checkbox_text',$data,['id'=>$post_data['data'][$i]['edit_id']]);
+              }elseif ($post_data['data'][$i]['edit'] == 'no'){
+                $is_success = $this->Typeform_model->formCreateInsert('checkbox_text',$data,$post_data['id'],'short_text');
 
               }
 
@@ -398,6 +459,29 @@ class Typeform extends CI_Controller
                     $content .= '<button class="btn-start" data-from="'.($no+1).'" data-to="'.($no).'" data-required="'.$value->type.'" data-required="'.$yesorno_text->required_field.'">Next</button>';
                     $content .= '</center>';
                     $content .= '</div>';
+                }elseif ($value->type == 'checkbox_text') {
+
+                     $checkbox_text = $this->crud->get_one_row('checkbox_text',['id'=>$value->content_id]);
+
+                    $content .= '<div class="next_lable next_lable'.$no.'" data-counter="'.$no.'" data-type="'.$value->type.'" data-name="'.$checkbox_text->name.'">';
+                    $content .= '<center>';
+                    $content .= '<h1 class="label-heading"> <span class="question-no">'.$no.'.</span> '.$checkbox_text->name.'</h1>';
+                    //$content .= '<p>'.$checkbox_text->value.'</p>';
+
+                    $choice_array = explode("=&", $checkbox_text->value);
+
+                   // echo '<pre>'; print_r($choice_array); die();
+                    foreach ($choice_array as $key1 => $value1) 
+                    {
+                        $content .= '<span class="checkbox-input"><input type="checkbox" name="checkbox_text_value'.$no.'[]" class="checkbox_text_value'.$no.'" value="'.$value1.'" /> '.$value1.'</span>';
+                    }
+
+
+                    $content .= '<br><br>';
+
+                    $content .= '<button class="btn-start" data-from="'.($no+1).'" data-to="'.($no).'" data-required="'.$value->type.'" data-required="'.$checkbox_text->required_field.'">Next</button>';
+                    $content .= '</center>';
+                    $content .= '</div>';
                 }
 
                 $no++;
@@ -452,6 +536,10 @@ class Typeform extends CI_Controller
                         'value'=>$post_data['data'][$i]['value'],
                         'type'=>$post_data['data'][$i]['type'],
                     ];
+
+                    if ($data['type'] == 'checkbox_text') {
+                          $data['value'] = implode("=&", $data['value']);
+                    }
 
                 $is_success = $this->Typeform_model->storeUserResponseDetails('user_response',$data);
                
@@ -536,6 +624,12 @@ class Typeform extends CI_Controller
                       $content .= '<b>'.$value->name.'</b>';
                       $content .= '<hr class="hr-response">';
                       $content .= '<p>'.$value->value.'</p>';
+                      $content .= '</div>';
+                  }elseif ($value->type == 'checkbox_text') {
+                      $content .= '<div>';
+                      $content .= '<b>'.$value->name.'</b>';
+                      $content .= '<hr class="hr-response">';
+                      $content .= '<p>'.str_replace("=&", " , ", $value->value).'</p>';
                       $content .= '</div>';
                   }
 

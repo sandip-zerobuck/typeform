@@ -292,7 +292,11 @@
     background-color: #F44336 !important;
 }
 
-
+.checkbox-input{
+    padding: 10px;
+    font-size: 15px;
+    font-weight: bold;
+}
 
 
 h2 {
@@ -413,6 +417,14 @@ $(document).ready(function(){
                      'value': $('.yesorno_text_value'+counter).val()
                      });
 
+                }else if(type == 'checkbox_text'){
+
+                    data.push({
+                     'type': type, 
+                     'name' : name,
+                     'value': $("input[name='checkbox_text_value"+counter+"[]']:checked").map(function(){return $(this).val();}).get()
+                     });
+
                 }
 
         });
@@ -438,7 +450,7 @@ $(document).ready(function(){
             }
         });
 
-        //console.log(data);
+        console.log(data);
 
     });
 

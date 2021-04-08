@@ -288,6 +288,17 @@ input:checked + .slider:before {
 	    left: 50%;
 	}
 		
+
+.choice-box{
+	width: 40%;
+	margin: 5px;
+	display: unset;
+}
+
+.list-choice li{
+	list-style: none;
+}
+
 	</style>
 
 </head>

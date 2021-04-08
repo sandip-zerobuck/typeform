@@ -134,6 +134,10 @@
             <i class="icon-check text-success"></i> <i class="icon-x text-danger"></i> <b>Yes or No</b>
         </div>
 
+        <div class="question-box" data-type="checkbox-text">
+            <i class="icon-checkbox-checked2 text-primary"></i> <b>Checkbox</b>
+        </div>
+
         <!-- <div class="question-box" data-type="yesorno-text">
             <i class="icon-envelop2 text-danger"></i> <b>Email Id</b>
         </div> -->
@@ -184,6 +188,28 @@ vieweditData();
         }
 
    });
+
+   $(document).off('click','.btn-add-choice').on('click','.btn-add-choice',function(){
+
+        var self = $(this);
+        var counter = self.data('counter');
+
+        $('.choice-content'+counter).append('<div><input type="text" class="form-control choice-box choice-value'+counter+'" name="choice-value'+counter+'[]" placeholder="Choice"> <span class="remove-choice-box" data-counter="'+counter+'"><i class="icon-close2 text-danger"></i></span> </div>');
+
+      });
+
+   $(document).off('click','.remove-choice-box').on('click','.remove-choice-box',function(){
+
+        var self = $(this);
+        var counter = self.data('counter');
+
+        if( confirm('Are you sure, you want to remove this filed?') ) {
+
+                $(this).closest("div").remove();
+
+        }
+
+   });  
 
 
    $(document).off('click','.remove-box').on('click','.remove-box',function(){
@@ -236,12 +262,20 @@ vieweditData();
                     required_field = 'no';
                 } 
 
+                var value = $('.text-placeholder'+counter).val();
+
+                if (type == "checkbox-text") {
+                          value = $("input[name='choice-value"+counter+"[]']").map(function(){return $(this).val();}).get();
+                }else{
+                   value = $('.text-placeholder'+counter).val();
+                }
+
             data.push({
                  'type': type, 
                  'counter': counter,
                  'edit':edit,
                  'name':$('.text-value'+counter).val(),
-                 'value':$('.text-placeholder'+counter).val(),
+                 'value':value,
                  'required_field':required_field,
                  'edit_id':edit_id,
                  });
@@ -366,6 +400,31 @@ function yesorno_text(counter)
 
     content += '<input type="text" class="form-control text-placeholder'+counter+'" placeholder="Type your answer here..." value="Select any one Yes or No">';
 
+
+    content += '</div>';
+    return content;
+}
+
+function checkbox_text(counter)
+{
+    var content = '';
+
+    content += '<div class="filed-question-box filed_counter_'+counter+'" data-counter="'+counter+'" data-type="checkbox-text" data-edit="no" data-edit_id="0">';
+    content += '<i class="icon-checkbox-checked2 text-primary"></i> ';
+    content += '<b class="box-text">Checkbox</b>';
+    content += '<button class="btn btn-danger pull-right remove-box" data-counter="'+counter+'"><i class="icon-trash-alt"></i> Delete</button>';
+    content += '<hr>';
+
+    content += '<b>Required :</b>';
+    content += '<label class="switch"> <input type="checkbox" name="required-value'+counter+'" class="required-value'+counter+'" value="yes"> <span class="slider round"></span> </label>';
+
+    content += '<input type="text" class="form-control text-value'+counter+'" placeholder="Your question here" name=""><br>';
+
+    content += '<div class="choice-content'+counter+' list-choice">';
+    content += '<div><input type="text" class="form-control choice-box choice-value'+counter+'" name="choice-value'+counter+'[]" placeholder="Choice"></div>';
+    content += '</div>';
+
+    content += '<button class="btn btn-primary btn-add-choice" data-counter="'+counter+'">Add choice</button>';
 
     content += '</div>';
     return content;
